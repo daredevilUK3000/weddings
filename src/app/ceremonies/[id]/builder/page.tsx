@@ -45,11 +45,14 @@ export default async function BuilderPage({
       <CeremonyNav ceremonyId={id} />
 
       <main className="mx-auto flex w-full max-w-2xl flex-col gap-12 px-6 py-12">
-        <h1 className="font-serif text-3xl font-medium">Ceremony builder</h1>
+        <div>
+          <h1 className="font-serif text-3xl font-medium">Your ceremony</h1>
+          <p className="mt-1 text-sm text-ink-soft">Your script, your vows, your day — shaped.</p>
+        </div>
 
         {ceremony.ceremony_script ? (
           <section className="flex flex-col gap-3">
-            <h2 className="text-lg font-medium">Ceremony script</h2>
+            <h2 className="text-lg font-medium">Your ceremony script</h2>
             <pre className="whitespace-pre-wrap rounded-sm border border-ink/10 bg-white/60 p-5 font-serif text-[15px] leading-relaxed">
               {ceremony.ceremony_script}
             </pre>
@@ -74,7 +77,7 @@ export default async function BuilderPage({
               <form key={i} action={selectVowDraft.bind(null, id, draft)}>
                 <button
                   type="submit"
-                  className="w-full rounded-sm border border-ink/10 bg-white/60 p-4 text-left font-serif text-[15px] leading-relaxed transition-colors hover:border-rust"
+                  className="w-full rounded-sm border border-ink/10 bg-white/60 p-4 text-left font-serif text-[15px] leading-relaxed transition-colors hover:border-champagne"
                 >
                   {draft}
                 </button>
@@ -100,37 +103,44 @@ export default async function BuilderPage({
         ) : null}
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-lg font-medium">Ceremony order</h2>
-          <ul className="flex flex-col gap-2">
-            {timeline?.map((moment, i) => (
-              <li
-                key={moment.id}
-                className="flex items-center justify-between rounded-sm border border-ink/10 bg-white/60 px-4 py-3"
-              >
-                <span>{moment.moment_name}</span>
-                <div className="flex gap-3 text-ink-soft">
-                  <form action={reorderMoment.bind(null, id, moment.id, "up")}>
-                    <button
-                      type="submit"
-                      disabled={i === 0}
-                      className="hover:text-rust disabled:opacity-30"
-                    >
-                      ↑
-                    </button>
-                  </form>
-                  <form action={reorderMoment.bind(null, id, moment.id, "down")}>
-                    <button
-                      type="submit"
-                      disabled={i === (timeline?.length ?? 0) - 1}
-                      className="hover:text-rust disabled:opacity-30"
-                    >
-                      ↓
-                    </button>
-                  </form>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <h2 className="text-lg font-medium">Your programme</h2>
+          <div className="rounded-sm border border-champagne/40 bg-white/60 px-2 py-2">
+            <ul>
+              {timeline?.map((moment, i) => (
+                <li
+                  key={moment.id}
+                  className="flex items-center justify-between gap-4 border-t border-ink/8 px-4 py-3.5 first:border-t-0"
+                >
+                  <div className="flex items-baseline gap-4">
+                    <span className="w-6 font-sans text-xs tabular-nums text-champagne">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="font-serif text-lg">{moment.moment_name}</span>
+                  </div>
+                  <div className="flex gap-3 text-ink-soft">
+                    <form action={reorderMoment.bind(null, id, moment.id, "up")}>
+                      <button
+                        type="submit"
+                        disabled={i === 0}
+                        className="transition-colors hover:text-wine disabled:opacity-30"
+                      >
+                        ↑
+                      </button>
+                    </form>
+                    <form action={reorderMoment.bind(null, id, moment.id, "down")}>
+                      <button
+                        type="submit"
+                        disabled={i === (timeline?.length ?? 0) - 1}
+                        className="transition-colors hover:text-wine disabled:opacity-30"
+                      >
+                        ↓
+                      </button>
+                    </form>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         </section>
       </main>
     </div>

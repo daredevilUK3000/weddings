@@ -58,7 +58,7 @@ export default async function VendorsPage({
 
       <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6 py-12">
         <div>
-          <p className="text-sm font-medium text-rust">Real vendors, already briefed</p>
+          <p className="text-sm font-medium text-wine">Real vendors, already briefed</p>
           <h1 className="font-serif text-3xl font-medium">Vendor concierge</h1>
         </div>
         <VendorsClient

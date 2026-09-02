@@ -30,7 +30,7 @@ export function RegistryGenerator({ ceremonyId }: { ceremonyId: string }) {
       <button
         onClick={generate}
         disabled={loading}
-        className="w-fit rounded-sm bg-ink px-4 py-2.5 text-sm font-medium text-paper transition-colors hover:bg-rust disabled:opacity-50"
+        className="w-fit rounded-sm bg-ink px-4 py-2.5 text-sm font-medium text-ivory transition-all hover:-translate-y-0.5 hover:bg-wine disabled:opacity-50"
       >
         {loading ? "Thinking of gifts…" : "Generate registry ideas"}
       </button>

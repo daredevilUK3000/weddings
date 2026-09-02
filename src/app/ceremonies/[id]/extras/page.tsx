@@ -60,9 +60,9 @@ export default async function ExtrasPage({
             {comingSoon.map((item) => (
               <div
                 key={item.title}
-                className="flex flex-col gap-2 rounded-sm border border-dashed border-ink/15 bg-stone/50 p-5"
+                className="flex flex-col gap-2 rounded-sm border border-dashed border-ink/15 bg-parchment/50 p-5"
               >
-                <span className="w-fit rounded-full border border-gold/50 px-2.5 py-0.5 text-[11px] font-medium tracking-wide text-rust">
+                <span className="w-fit rounded-full border border-champagne/50 px-2.5 py-0.5 text-[11px] font-medium tracking-wide text-wine">
                   Coming soon
                 </span>
                 <h3 className="font-serif text-base font-medium">{item.title}</h3>

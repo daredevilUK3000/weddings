@@ -26,7 +26,7 @@ export function CeremonyNav({ ceremonyId }: { ceremonyId: string }) {
             href={href}
             className={`px-3 py-2 text-sm font-medium transition-colors ${
               active
-                ? "border-b-2 border-rust text-ink"
+                ? "border-b-2 border-wine text-ink"
                 : "border-b-2 border-transparent text-ink-soft hover:text-ink"
             }`}
           >

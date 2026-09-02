@@ -54,7 +54,7 @@ export default async function BudgetPage({
         <div className="overflow-hidden rounded-sm border border-ink/10 bg-white/60">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-ink/10 bg-stone/60 text-left">
+              <tr className="border-b border-ink/10 bg-parchment/60 text-left">
                 <th className="px-4 py-3 font-medium">Category</th>
                 <th className="px-4 py-3 font-medium">Estimated</th>
                 <th className="px-4 py-3 font-medium">Actual</th>
@@ -75,18 +75,18 @@ export default async function BudgetPage({
                         name="estimated_cost"
                         defaultValue={b.estimated_cost ?? ""}
                         placeholder="Estimated"
-                        className="w-28 rounded-sm border border-ink/15 bg-white px-2 py-1 outline-none focus:border-rust"
+                        className="w-28 rounded-sm border border-ink/15 bg-white px-2 py-1 outline-none focus:border-champagne"
                       />
                       <input
                         type="number"
                         name="actual_cost"
                         defaultValue={b.actual_cost ?? ""}
                         placeholder="Actual"
-                        className="w-28 rounded-sm border border-ink/15 bg-white px-2 py-1 outline-none focus:border-rust"
+                        className="w-28 rounded-sm border border-ink/15 bg-white px-2 py-1 outline-none focus:border-champagne"
                       />
                       <button
                         type="submit"
-                        className="rounded-sm border border-ink/15 px-3 py-1 transition-colors hover:border-rust hover:text-rust"
+                        className="rounded-sm border border-ink/15 px-3 py-1 transition-colors hover:border-champagne hover:text-wine"
                       >
                         Save
                       </button>
@@ -96,7 +96,7 @@ export default async function BudgetPage({
               ))}
             </tbody>
             <tfoot>
-              <tr className="border-t border-ink/10 bg-stone/60 font-medium">
+              <tr className="border-t border-ink/10 bg-parchment/60 font-medium">
                 <td className="px-4 py-3">Total</td>
                 <td className="px-4 py-3">${totalEstimated.toLocaleString()}</td>
                 <td className="px-4 py-3">${totalActual.toLocaleString()}</td>

@@ -52,12 +52,17 @@ export function OfficiantChat({ ceremonyId }: { ceremonyId: string }) {
           </p>
         ) : null}
         {messages.map((m) => (
-          <div key={m.id} className={m.role === "user" ? "self-end text-right" : "self-start"}>
+          <div
+            key={m.id}
+            className={`animate-[fadeIn_0.4s_ease] ${
+              m.role === "user" ? "self-end text-right" : "self-start"
+            }`}
+          >
             <p
               className={`inline-block max-w-md rounded-lg px-4 py-2.5 text-[15px] leading-relaxed ${
                 m.role === "user"
-                  ? "bg-ink text-paper"
-                  : "border border-gold/40 bg-paper font-serif text-ink"
+                  ? "bg-ink text-ivory"
+                  : "border border-champagne/40 bg-ivory font-serif text-ink"
               }`}
             >
               {m.parts
@@ -69,10 +74,10 @@ export function OfficiantChat({ ceremonyId }: { ceremonyId: string }) {
         ))}
         {waitingOnOfficiant ? (
           <div className="self-start">
-            <span className="inline-flex items-center gap-1.5 rounded-lg border border-gold/40 bg-paper px-4 py-2.5">
-              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-rust [animation-delay:-0.2s]" />
-              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-rust [animation-delay:-0.1s]" />
-              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-rust" />
+            <span className="inline-flex items-center gap-1.5 rounded-lg border border-champagne/40 bg-ivory px-4 py-2.5">
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-wine [animation-delay:-0.2s]" />
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-wine [animation-delay:-0.1s]" />
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-wine" />
             </span>
           </div>
         ) : null}
@@ -92,12 +97,12 @@ export function OfficiantChat({ ceremonyId }: { ceremonyId: string }) {
           onChange={(e) => setInput(e.target.value)}
           disabled={status !== "ready"}
           placeholder="Type your answer…"
-          className="flex-1 rounded-sm border border-ink/15 bg-white px-3 py-2.5 outline-none focus:border-rust disabled:opacity-60"
+          className="flex-1 rounded-sm border border-ink/15 bg-white px-3 py-2.5 outline-none focus:border-champagne disabled:opacity-60"
         />
         <button
           type="submit"
           disabled={status !== "ready"}
-          className="rounded-sm bg-ink px-4 py-2.5 font-medium text-paper transition-colors hover:bg-rust disabled:opacity-50"
+          className="rounded-sm bg-ink px-4 py-2.5 font-medium text-ivory transition-all hover:-translate-y-0.5 hover:bg-wine disabled:opacity-50"
         >
           Send
         </button>
@@ -107,7 +112,7 @@ export function OfficiantChat({ ceremonyId }: { ceremonyId: string }) {
         <button
           onClick={handleGenerate}
           disabled={generating}
-          className="rounded-sm border border-rust px-4 py-3 font-medium text-rust transition-colors hover:bg-rust hover:text-paper disabled:opacity-50"
+          className="rounded-sm border border-wine px-4 py-3 font-medium text-wine transition-all hover:-translate-y-0.5 hover:bg-wine hover:text-ivory disabled:opacity-50"
         >
           {generating ? "Drafting your ceremony…" : "I'm ready — draft my ceremony & vows"}
         </button>

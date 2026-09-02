@@ -27,14 +27,17 @@ export default async function OfficiantPage({
   }
 
   return (
-    <div className="flex h-screen flex-col bg-stone">
+    <div className="flex h-screen flex-col bg-parchment">
       <AppHeader />
       <CeremonyNav ceremonyId={id} />
 
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-4 overflow-hidden px-6 py-6">
         <div>
-          <p className="text-sm font-medium text-rust">A conversation, not a form</p>
-          <h1 className="font-serif text-2xl font-medium">Your AI officiant</h1>
+          <p className="text-sm font-medium text-wine">A conversation, not a form</p>
+          <h1 className="font-serif text-2xl font-medium">Your Officiant</h1>
+          <p className="text-sm text-ink-soft">
+            An officiant who listens before it writes.
+          </p>
         </div>
         <OfficiantChat ceremonyId={id} />
       </main>

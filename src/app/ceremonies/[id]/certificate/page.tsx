@@ -35,13 +35,13 @@ export default async function CertificatePage({
       <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 py-12">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-rust">Something to keep</p>
+            <p className="text-sm font-medium text-wine">Something to keep</p>
             <h1 className="font-serif text-3xl font-medium">Certificate of Self-Commitment</h1>
           </div>
           <a
             href={pdfUrl}
             download
-            className="rounded-sm bg-ink px-4 py-2.5 font-medium text-paper transition-colors hover:bg-rust"
+            className="rounded-sm bg-ink px-4 py-2.5 font-medium text-ivory transition-all hover:-translate-y-0.5 hover:bg-wine"
           >
             Download PDF
           </a>

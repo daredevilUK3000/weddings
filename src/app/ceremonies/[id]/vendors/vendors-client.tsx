@@ -109,7 +109,7 @@ export function VendorsClient({
         <input
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          className="rounded-sm border border-ink/15 bg-white px-3 py-2.5 outline-none focus:border-rust"
+          className="rounded-sm border border-ink/15 bg-white px-3 py-2.5 outline-none focus:border-champagne"
         />
       </label>
 
@@ -119,7 +119,7 @@ export function VendorsClient({
             key={c.id}
             onClick={() => search(c.slug)}
             disabled={searching === c.slug || !location}
-            className="rounded-sm border border-ink/15 bg-white px-3 py-2 text-sm transition-colors hover:border-rust disabled:opacity-50"
+            className="rounded-sm border border-ink/15 bg-white px-3 py-2 text-sm transition-colors hover:border-champagne disabled:opacity-50"
           >
             {searching === c.slug ? `Searching ${c.name}…` : `Find ${c.name}`}
           </button>
@@ -127,7 +127,7 @@ export function VendorsClient({
       </div>
 
       {shortlist.length === 0 ? (
-        <div className="flex flex-col items-center gap-2 rounded-sm border border-dashed border-ink/15 bg-stone/60 px-6 py-14 text-center">
+        <div className="flex flex-col items-center gap-2 rounded-sm border border-dashed border-ink/15 bg-parchment/60 px-6 py-14 text-center">
           <p className="font-serif text-lg">No vendors shortlisted yet.</p>
           <p className="max-w-sm text-sm text-ink-soft">
             Set a location and search a category above — we&apos;ll pull real venues,
@@ -144,18 +144,18 @@ export function VendorsClient({
               <div className="flex items-baseline justify-between">
                 <h3 className="font-serif text-lg font-medium">{v.name}</h3>
                 {v.rating ? (
-                  <span className="text-sm text-gold">★ {v.rating}</span>
+                  <span className="text-sm text-champagne">★ {v.rating}</span>
                 ) : null}
               </div>
               {v.address ? <p className="text-sm text-ink-soft">{v.address}</p> : null}
               {v.ai_rationale ? (
-                <p className="border-l-2 border-gold/50 pl-3 text-sm text-ink-soft">
+                <p className="border-l-2 border-champagne/50 pl-3 text-sm text-ink-soft">
                   {v.ai_rationale}
                 </p>
               ) : null}
 
               {v.outreach_draft ? (
-                <div className="flex flex-col gap-3 rounded-sm bg-stone/60 p-4">
+                <div className="flex flex-col gap-3 rounded-sm bg-parchment/60 p-4">
                   <p className="whitespace-pre-wrap font-serif text-sm leading-relaxed">
                     {v.outreach_draft.draft_text}
                   </p>
@@ -182,12 +182,12 @@ export function VendorsClient({
                     placeholder="Anything specific to ask? (optional)"
                     value={asks[v.id] ?? ""}
                     onChange={(e) => setAsks((prev) => ({ ...prev, [v.id]: e.target.value }))}
-                    className="flex-1 rounded-sm border border-ink/15 bg-white px-3 py-2 text-sm outline-none focus:border-rust"
+                    className="flex-1 rounded-sm border border-ink/15 bg-white px-3 py-2 text-sm outline-none focus:border-champagne"
                   />
                   <button
                     onClick={() => draftOutreach(v.id)}
                     disabled={drafting === v.id}
-                    className="rounded-sm bg-ink px-3 py-2 text-sm font-medium text-paper transition-colors hover:bg-rust disabled:opacity-50"
+                    className="rounded-sm bg-ink px-3 py-2 text-sm font-medium text-ivory transition-all hover:-translate-y-0.5 hover:bg-wine disabled:opacity-50"
                   >
                     {drafting === v.id ? "Drafting…" : "Draft outreach"}
                   </button>

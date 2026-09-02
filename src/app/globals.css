@@ -1,32 +1,62 @@
 @import "tailwindcss";
 
 :root {
-  --ink: #1c1b19;
-  --paper: #faf7f2;
-  --rust: #8b3a2f;
-  --gold: #c9a876;
-  --stone: #ede7dd;
-  --ink-soft: #5a5650;
+  --ivory: #f7f3ec;
+  --parchment: #ede5d8;
+  --ink: #20201d;
+  --champagne: #c8ad82;
+  --dusty-rose: #b9827a;
+  --wine: #513a3a;
+  --ink-soft: #6b6259;
 
-  --background: var(--paper);
+  --background: var(--ivory);
   --foreground: var(--ink);
 }
 
 @theme inline {
   --color-ink: var(--ink);
-  --color-paper: var(--paper);
-  --color-rust: var(--rust);
-  --color-gold: var(--gold);
-  --color-stone: var(--stone);
+  --color-ivory: var(--ivory);
+  --color-parchment: var(--parchment);
+  --color-champagne: var(--champagne);
+  --color-dusty-rose: var(--dusty-rose);
+  --color-wine: var(--wine);
   --color-ink-soft: var(--ink-soft);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
-  --font-serif: var(--font-fraunces);
+  --font-serif: var(--font-cormorant);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), sans-serif;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes savedPulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  15% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }

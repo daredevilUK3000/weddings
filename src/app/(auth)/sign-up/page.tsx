@@ -34,7 +34,7 @@ export default function SignUpPage() {
   if (sent) {
     return (
       <main className="mx-auto flex min-h-screen w-full max-w-sm flex-col justify-center gap-4 px-6 text-center">
-        <div className="mx-auto mb-2 h-px w-10 bg-gold" />
+        <div className="mx-auto mb-2 h-px w-10 bg-champagne" />
         <h1 className="font-serif text-3xl font-medium">Check your email</h1>
         <p className="text-ink-soft">
           We sent a confirmation link to {email}. Follow it to finish setting up your account.
@@ -59,7 +59,7 @@ export default function SignUpPage() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="rounded-sm border border-ink/15 bg-white px-3 py-2.5 outline-none focus:border-rust"
+          className="rounded-sm border border-ink/15 bg-white px-3 py-2.5 outline-none focus:border-champagne"
         />
         <input
           type="password"
@@ -68,13 +68,13 @@ export default function SignUpPage() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="rounded-sm border border-ink/15 bg-white px-3 py-2.5 outline-none focus:border-rust"
+          className="rounded-sm border border-ink/15 bg-white px-3 py-2.5 outline-none focus:border-champagne"
         />
-        {error ? <p className="text-sm text-rust">{error}</p> : null}
+        {error ? <p className="text-sm text-wine">{error}</p> : null}
         <button
           type="submit"
           disabled={loading}
-          className="rounded-sm bg-ink px-3 py-3 font-medium text-paper transition-colors hover:bg-rust disabled:opacity-50"
+          className="rounded-sm bg-ink px-3 py-3 font-medium text-ivory transition-all hover:-translate-y-0.5 hover:bg-wine disabled:opacity-50"
         >
           {loading ? "Creating account…" : "Create account"}
         </button>

@@ -3,11 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import type { Vibe } from "@/lib/types/database";
 
 // WeddingsForOne design tokens (kept in sync with src/app/globals.css).
-const INK = "#1C1B19";
-const PAPER = "#FAF7F2";
-const RUST = "#8B3A2F";
-const GOLD = "#C9A876";
-const INK_SOFT = "#5A5650";
+const INK = "#20201D";
+const IVORY = "#F7F3EC";
+const WINE = "#513A3A";
+const CHAMPAGNE = "#C8AD82";
+const INK_SOFT = "#6B6259";
 
 const styles = StyleSheet.create({
   page: {
@@ -20,8 +20,8 @@ const styles = StyleSheet.create({
   },
   card: {
     borderWidth: 1,
-    borderColor: GOLD,
-    backgroundColor: PAPER,
+    borderColor: CHAMPAGNE,
+    backgroundColor: IVORY,
     padding: 48,
     width: "100%",
     height: "100%",
@@ -30,11 +30,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  monogram: {
+    fontFamily: "Times-Roman",
+    fontSize: 13,
+    letterSpacing: 4,
+    color: CHAMPAGNE,
+    marginBottom: 14,
+  },
   eyebrow: {
     fontFamily: "Helvetica",
     fontSize: 11,
     letterSpacing: 3,
-    color: RUST,
+    color: WINE,
     marginBottom: 20,
     textTransform: "uppercase",
   },
@@ -55,7 +62,7 @@ const styles = StyleSheet.create({
   divider: {
     width: 90,
     height: 1,
-    backgroundColor: GOLD,
+    backgroundColor: CHAMPAGNE,
     marginBottom: 22,
   },
   vowSummary: {
@@ -70,7 +77,7 @@ const styles = StyleSheet.create({
   date: {
     fontFamily: "Times-Roman",
     fontSize: 12,
-    color: RUST,
+    color: WINE,
     marginBottom: 36,
   },
   signatureRow: {
@@ -88,7 +95,7 @@ const styles = StyleSheet.create({
   },
   signatureLine: {
     borderBottomWidth: 1,
-    borderBottomColor: GOLD,
+    borderBottomColor: CHAMPAGNE,
     width: "100%",
     marginBottom: 6,
     height: 24,
@@ -112,6 +119,7 @@ function Certificate({ name, date, vowSummary }: CertificateProps) {
     <Document>
       <Page size="A4" orientation="landscape" style={styles.page}>
         <View style={styles.card}>
+          <Text style={styles.monogram}>W · ONE</Text>
           <Text style={styles.eyebrow}>Certificate of Self-Commitment</Text>
           <Text style={styles.title}>This certifies that</Text>
           <Text style={styles.name}>{name}</Text>

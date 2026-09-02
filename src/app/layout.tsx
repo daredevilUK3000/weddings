@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
 });
 
@@ -16,18 +16,18 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "WeddingsForOne — A ceremony of one",
+  title: "WeddingsForOne — This is your ceremony",
   description:
-    "Plan a real self-commitment ceremony — vows, a venue, a photographer, a day that's entirely yours — with an AI officiant and planner built for one.",
+    "A self-commitment ceremony, entirely yours — your vows, your officiant, your day. Not a stripped-down wedding. A ceremony designed around one person.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
+      className={`${cormorant.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-paper text-ink">{children}</body>
+      <body className="min-h-full flex flex-col bg-ivory text-ink">{children}</body>
     </html>
   );
 }
