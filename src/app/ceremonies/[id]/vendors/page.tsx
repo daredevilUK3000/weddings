@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { VendorsClient } from "./vendors-client";
+import { AppHeader } from "@/components/app-header";
+import { CeremonyNav } from "@/components/ceremony-nav";
 
 export default async function VendorsPage({
   params,
@@ -50,14 +52,22 @@ export default async function VendorsPage({
   }));
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6 py-12">
-      <h1 className="text-2xl font-semibold">Vendor concierge</h1>
-      <VendorsClient
-        ceremonyId={id}
-        defaultLocation={ceremony.location ?? ""}
-        categories={categories ?? []}
-        initialShortlist={initialShortlist}
-      />
-    </main>
+    <div className="flex min-h-screen flex-col">
+      <AppHeader />
+      <CeremonyNav ceremonyId={id} />
+
+      <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6 py-12">
+        <div>
+          <p className="text-sm font-medium text-rust">Real vendors, already briefed</p>
+          <h1 className="font-serif text-3xl font-medium">Vendor concierge</h1>
+        </div>
+        <VendorsClient
+          ceremonyId={id}
+          defaultLocation={ceremony.location ?? ""}
+          categories={categories ?? []}
+          initialShortlist={initialShortlist}
+        />
+      </main>
+    </div>
   );
 }

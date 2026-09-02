@@ -2,93 +2,103 @@ import { Document, Page, Text, View, StyleSheet, renderToStream } from "@react-p
 import { createClient } from "@/lib/supabase/server";
 import type { Vibe } from "@/lib/types/database";
 
-const VIBE_THEME: Record<Vibe, { accent: string; heading: string; bg: string }> = {
-  spiritual: { accent: "#8a6d3b", heading: "#4a3b25", bg: "#fdf8ee" },
-  glam: { accent: "#b8860b", heading: "#1a1a1a", bg: "#fffdf5" },
-  minimalist: { accent: "#333333", heading: "#111111", bg: "#ffffff" },
-  gothic_romantic: { accent: "#7a1f3d", heading: "#2a0a14", bg: "#f5eef0" },
-  funny: { accent: "#e07a1f", heading: "#2a1a0a", bg: "#fffaf0" },
-};
+// WeddingsForOne design tokens (kept in sync with src/app/globals.css).
+const INK = "#1C1B19";
+const PAPER = "#FAF7F2";
+const RUST = "#8B3A2F";
+const GOLD = "#C9A876";
+const INK_SOFT = "#5A5650";
 
-function buildStyles(theme: { accent: string; heading: string; bg: string }) {
-  return StyleSheet.create({
-    page: {
-      backgroundColor: theme.bg,
-      padding: 64,
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    border: {
-      borderWidth: 2,
-      borderColor: theme.accent,
-      padding: 40,
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    eyebrow: {
-      fontSize: 12,
-      letterSpacing: 4,
-      color: theme.accent,
-      marginBottom: 16,
-      textTransform: "uppercase",
-    },
-    title: {
-      fontSize: 28,
-      color: theme.heading,
-      marginBottom: 24,
-      textAlign: "center",
-    },
-    name: {
-      fontSize: 22,
-      color: theme.heading,
-      marginBottom: 24,
-      textAlign: "center",
-    },
-    vowSummary: {
-      fontSize: 12,
-      color: theme.heading,
-      lineHeight: 1.6,
-      marginBottom: 32,
-      textAlign: "center",
-      maxWidth: 420,
-    },
-    date: {
-      fontSize: 12,
-      color: theme.accent,
-      marginBottom: 40,
-    },
-    signatureRow: {
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "space-between",
-      width: "100%",
-      marginTop: 24,
-    },
-    signatureBlock: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      width: "40%",
-    },
-    signatureLine: {
-      borderBottomWidth: 1,
-      borderBottomColor: theme.heading,
-      width: "100%",
-      marginBottom: 6,
-      height: 24,
-    },
-    signatureLabel: {
-      fontSize: 9,
-      color: theme.heading,
-    },
-  });
-}
+const styles = StyleSheet.create({
+  page: {
+    backgroundColor: INK,
+    padding: 40,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  card: {
+    borderWidth: 1,
+    borderColor: GOLD,
+    backgroundColor: PAPER,
+    padding: 48,
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  eyebrow: {
+    fontFamily: "Helvetica",
+    fontSize: 11,
+    letterSpacing: 3,
+    color: RUST,
+    marginBottom: 20,
+    textTransform: "uppercase",
+  },
+  title: {
+    fontFamily: "Times-Italic",
+    fontSize: 16,
+    color: INK_SOFT,
+    marginBottom: 18,
+    textAlign: "center",
+  },
+  name: {
+    fontFamily: "Times-Bold",
+    fontSize: 34,
+    color: INK,
+    marginBottom: 18,
+    textAlign: "center",
+  },
+  divider: {
+    width: 90,
+    height: 1,
+    backgroundColor: GOLD,
+    marginBottom: 22,
+  },
+  vowSummary: {
+    fontFamily: "Times-Italic",
+    fontSize: 13,
+    color: INK,
+    lineHeight: 1.6,
+    marginBottom: 28,
+    textAlign: "center",
+    maxWidth: 420,
+  },
+  date: {
+    fontFamily: "Times-Roman",
+    fontSize: 12,
+    color: RUST,
+    marginBottom: 36,
+  },
+  signatureRow: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "70%",
+    marginTop: 20,
+  },
+  signatureBlock: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    width: "40%",
+  },
+  signatureLine: {
+    borderBottomWidth: 1,
+    borderBottomColor: GOLD,
+    width: "100%",
+    marginBottom: 6,
+    height: 24,
+  },
+  signatureLabel: {
+    fontFamily: "Helvetica",
+    fontSize: 9,
+    color: INK_SOFT,
+  },
+});
 
 interface CertificateProps {
   name: string;
@@ -97,19 +107,17 @@ interface CertificateProps {
   vibe: Vibe;
 }
 
-function Certificate({ name, date, vowSummary, vibe }: CertificateProps) {
-  const theme = VIBE_THEME[vibe];
-  const styles = buildStyles(theme);
-
+function Certificate({ name, date, vowSummary }: CertificateProps) {
   return (
     <Document>
       <Page size="A4" orientation="landscape" style={styles.page}>
-        <View style={styles.border}>
+        <View style={styles.card}>
           <Text style={styles.eyebrow}>Certificate of Self-Commitment</Text>
           <Text style={styles.title}>This certifies that</Text>
           <Text style={styles.name}>{name}</Text>
+          <View style={styles.divider} />
           <Text style={styles.vowSummary}>{vowSummary}</Text>
-          {date ? <Text style={styles.date}>{date}</Text> : null}
+          {date ? <Text style={styles.date}>committed to themself on {date}</Text> : null}
           <View style={styles.signatureRow}>
             <View style={styles.signatureBlock}>
               <View style={styles.signatureLine} />

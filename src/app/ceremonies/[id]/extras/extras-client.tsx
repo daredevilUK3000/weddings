@@ -30,16 +30,16 @@ export function RegistryGenerator({ ceremonyId }: { ceremonyId: string }) {
       <button
         onClick={generate}
         disabled={loading}
-        className="w-fit rounded-md bg-black px-4 py-2 text-sm text-white disabled:opacity-50"
+        className="w-fit rounded-sm bg-ink px-4 py-2.5 text-sm font-medium text-paper transition-colors hover:bg-rust disabled:opacity-50"
       >
         {loading ? "Thinking of gifts…" : "Generate registry ideas"}
       </button>
       {suggestions.length > 0 ? (
         <ul className="flex flex-col gap-2">
           {suggestions.map((s, i) => (
-            <li key={i} className="rounded-md border border-black/10 p-3 text-sm">
-              <p className="font-medium">{s.title}</p>
-              <p className="text-black/60">{s.description}</p>
+            <li key={i} className="rounded-sm border border-ink/10 bg-white/60 p-4 text-sm">
+              <p className="font-serif text-base font-medium">{s.title}</p>
+              <p className="mt-1 text-ink-soft">{s.description}</p>
             </li>
           ))}
         </ul>
