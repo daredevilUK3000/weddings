@@ -1,7 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { Monogram, Wordmark } from "@/components/monogram";
-import { PhotoSlot } from "@/components/photo-slot";
 
 export default async function LandingPage() {
   const supabase = await createClient();
@@ -132,7 +132,15 @@ export default async function LandingPage() {
                 by an AI officiant that listens before it writes.
               </p>
             </div>
-            <PhotoSlot label="A person standing at an altar, alone" aspect="aspect-3/4" />
+            <div className="relative aspect-3/4 overflow-hidden rounded-sm border border-ink/8">
+              <Image
+                src="/images/landing/altar.jpg"
+                alt="A person standing alone at the altar, sunlit and unhurried"
+                fill
+                sizes="(min-width: 768px) 50vw, 100vw"
+                className="object-cover"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 items-center gap-14 border-t border-ink/10 py-14 md:grid-cols-2 md:gap-16">
@@ -144,11 +152,15 @@ export default async function LandingPage() {
                 for you, so you&apos;re never the one explaining what a solo wedding is.
               </p>
             </div>
-            <PhotoSlot
-              label="An elegant dinner table set for one"
-              aspect="aspect-4/3"
-              className="md:order-1"
-            />
+            <div className="relative aspect-4/3 overflow-hidden rounded-sm border border-ink/8 md:order-1">
+              <Image
+                src="/images/landing/dinner-table.jpg"
+                alt="An elegant dinner table set for one, candlelit"
+                fill
+                sizes="(min-width: 768px) 50vw, 100vw"
+                className="object-cover"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 items-center gap-14 border-t border-ink/10 border-b py-14 md:grid-cols-2 md:gap-16">
@@ -160,7 +172,15 @@ export default async function LandingPage() {
                 the day moment by moment, in whatever order means something.
               </p>
             </div>
-            <PhotoSlot label="A solitary dance, candlelight" aspect="aspect-4/3" />
+            <div className="relative aspect-4/3 overflow-hidden rounded-sm border border-ink/8">
+              <Image
+                src="/images/landing/dancing-alone.jpg"
+                alt="A solitary dance, arms outstretched, seen from above"
+                fill
+                sizes="(min-width: 768px) 50vw, 100vw"
+                className="object-cover"
+              />
+            </div>
           </div>
         </div>
       </section>
