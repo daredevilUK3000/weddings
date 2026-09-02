@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function LandingPage() {
@@ -8,9 +7,8 @@ export default async function LandingPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (user) {
-    redirect("/dashboard");
-  }
+  const primaryHref = user ? "/dashboard" : "/sign-up";
+  const primaryLabel = user ? "Go to your ceremonies" : "Begin your ceremony";
 
   return (
     <div className="flex flex-1 flex-col">
@@ -23,14 +21,16 @@ export default async function LandingPage() {
           <a href="#certificate" className="hidden text-sm font-medium sm:inline">
             Certificate
           </a>
-          <Link href="/login" className="hidden text-sm font-medium sm:inline">
-            Sign in
-          </Link>
+          {!user ? (
+            <Link href="/login" className="hidden text-sm font-medium sm:inline">
+              Sign in
+            </Link>
+          ) : null}
           <Link
-            href="/sign-up"
+            href={primaryHref}
             className="rounded-sm bg-ink px-5 py-2.5 text-sm font-medium text-paper transition-colors hover:bg-rust"
           >
-            Begin your ceremony
+            {primaryLabel}
           </Link>
         </div>
       </nav>
@@ -62,10 +62,10 @@ export default async function LandingPage() {
           </p>
           <div className="mt-9 flex flex-wrap gap-4">
             <Link
-              href="/sign-up"
+              href={primaryHref}
               className="rounded-sm bg-paper px-7 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90"
             >
-              Begin your ceremony
+              {primaryLabel}
             </Link>
             <a
               href="#moments"
@@ -178,10 +178,10 @@ export default async function LandingPage() {
           Your day. Your vows. Your name on the certificate.
         </h2>
         <Link
-          href="/sign-up"
+          href={primaryHref}
           className="mt-9 inline-block rounded-sm bg-paper px-7 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90"
         >
-          Begin your ceremony
+          {primaryLabel}
         </Link>
       </section>
 

@@ -22,7 +22,7 @@ describe("GET /auth/callback", () => {
 
     expect(exchangeCodeForSession).toHaveBeenCalledWith("abc123");
     expect(res.status).toBe(307);
-    expect(res.headers.get("location")).toBe("http://localhost:3000/");
+    expect(res.headers.get("location")).toBe("http://localhost:3000/dashboard");
   });
 
   it("redirects to the `next` param when provided", async () => {
@@ -39,6 +39,6 @@ describe("GET /auth/callback", () => {
     const res = await GET(new Request("http://localhost:3000/auth/callback"));
 
     expect(exchangeCodeForSession).not.toHaveBeenCalled();
-    expect(res.headers.get("location")).toBe("http://localhost:3000/");
+    expect(res.headers.get("location")).toBe("http://localhost:3000/dashboard");
   });
 });

@@ -29,7 +29,19 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <AppHeader right={<SignOutButton />} />
+      <AppHeader
+        right={
+          <div className="flex items-center gap-5">
+            <Link
+              href="/"
+              className="text-sm text-ink-soft underline decoration-ink-soft/30 underline-offset-2 hover:text-ink"
+            >
+              Visit homepage
+            </Link>
+            <SignOutButton />
+          </div>
+        }
+      />
 
       <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-16">
         <div className="flex items-center justify-between">

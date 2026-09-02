@@ -43,7 +43,7 @@ describe("LoginPage", () => {
       email: "me@example.com",
       password: "hunter2",
     }));
-    await waitFor(() => expect(push).toHaveBeenCalledWith("/"));
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/dashboard"));
     expect(refresh).toHaveBeenCalled();
   });
 
