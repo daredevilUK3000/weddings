@@ -49,100 +49,100 @@ const sealDataUri = `data:image/png;base64,${fs
 const styles = StyleSheet.create({
   page: {
     backgroundColor: IVORY,
-    padding: 28,
+    padding: 16,
     fontFamily: "Cormorant Garamond",
     justifyContent: "center",
   },
   frameOuter: {
-    borderWidth: 1.1,
+    borderWidth: 1.6,
     borderColor: CHAMPAGNE,
-    padding: 6,
+    padding: 5,
   },
   frameInner: {
-    borderWidth: 0.6,
+    borderWidth: 0.9,
     borderColor: CHAMPAGNE,
-    paddingTop: 24,
-    paddingBottom: 22,
-    paddingHorizontal: 44,
+    paddingTop: 16,
+    paddingBottom: 14,
+    paddingHorizontal: 30,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
   },
-  seal: { width: 48, height: 51, marginBottom: 6 },
+  seal: { width: 72, height: 76, marginBottom: 10 },
   brandLine: {
-    fontSize: 11,
-    letterSpacing: 3,
+    fontSize: 14,
+    letterSpacing: 3.5,
     color: INK,
-    marginBottom: 14,
+    marginBottom: 16,
   },
   ruleRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 8,
+    marginVertical: 7,
   },
-  ruleLine: { width: 46, height: 0.75, backgroundColor: CHAMPAGNE },
+  ruleLine: { width: 60, height: 0.9, backgroundColor: CHAMPAGNE },
   certTitle: {
-    fontSize: 36,
+    fontSize: 52,
     fontWeight: 600,
     color: CHAMPAGNE,
-    letterSpacing: 6,
+    letterSpacing: 8,
   },
   certSubtitle: {
-    fontSize: 13,
-    letterSpacing: 4,
+    fontSize: 16,
+    letterSpacing: 4.5,
     color: INK,
-    marginTop: 8,
+    marginTop: 10,
   },
   certifiesThat: {
-    fontSize: 11,
-    letterSpacing: 3,
+    fontSize: 13,
+    letterSpacing: 3.5,
     color: INK_SOFT,
   },
   name: {
     fontFamily: "Mrs Saint Delafield",
-    fontSize: 44,
+    fontSize: 62,
     color: CHAMPAGNE,
-    marginTop: 2,
+    marginTop: 4,
     textAlign: "center",
   },
   bodyLine: {
-    fontSize: 12,
-    letterSpacing: 1.5,
+    fontSize: 14,
+    letterSpacing: 1.6,
     color: INK,
     textAlign: "center",
-    lineHeight: 1.45,
+    lineHeight: 1.5,
   },
   vowLine: {
     fontFamily: "Cormorant Garamond",
     fontStyle: "italic",
-    fontSize: 15,
+    fontSize: 18,
     color: CHAMPAGNE,
     textAlign: "center",
-    marginTop: 8,
-    maxWidth: 380,
+    marginTop: 10,
+    maxWidth: 420,
   },
   committedLabel: {
-    fontSize: 10,
+    fontSize: 12,
     letterSpacing: 3,
     color: INK_SOFT,
   },
   dateScript: {
     fontFamily: "Mrs Saint Delafield",
-    fontSize: 20,
+    fontSize: 28,
     color: INK,
-    marginTop: 0,
+    marginTop: 2,
   },
   sigRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
-    width: "100%",
-    marginTop: 4,
+    width: "82%",
+    marginTop: 6,
   },
   sigBlock: { alignItems: "center", width: "34%" },
   sigScript: {
     fontFamily: "Mrs Saint Delafield",
-    fontSize: 16,
+    fontSize: 21,
     color: INK_SOFT,
   },
   sigLine: {
@@ -152,12 +152,14 @@ const styles = StyleSheet.create({
     marginTop: 6,
     marginBottom: 6,
   },
-  sigLabel: { fontSize: 8, letterSpacing: 2, color: INK_SOFT },
+  sigLabel: { fontSize: 9.5, letterSpacing: 2, color: INK_SOFT },
   footerTagline: {
-    fontSize: 9,
-    letterSpacing: 2,
+    fontSize: 11,
+    letterSpacing: 2.5,
     color: INK_SOFT,
-    marginTop: 14,
+    marginTop: 10,
+    textAlign: "center",
+    width: "84%",
   },
 });
 
@@ -166,12 +168,12 @@ type CornerPosition = "topLeft" | "topRight" | "bottomLeft" | "bottomRight";
 function Corner({ at }: { at: CornerPosition }) {
   const position =
     at === "topLeft"
-      ? { top: 8, left: 8 }
+      ? { top: 6, left: 6 }
       : at === "topRight"
-        ? { top: 8, right: 8 }
+        ? { top: 6, right: 6 }
         : at === "bottomLeft"
-          ? { bottom: 8, left: 8 }
-          : { bottom: 8, right: 8 };
+          ? { bottom: 6, left: 6 }
+          : { bottom: 6, right: 6 };
 
   const mirrorX = at === "topRight" || at === "bottomRight";
   const mirrorY = at === "bottomLeft" || at === "bottomRight";
@@ -181,8 +183,8 @@ function Corner({ at }: { at: CornerPosition }) {
 
   return (
     <Svg
-      width={44}
-      height={44}
+      width={66}
+      height={66}
       viewBox="0 0 44 44"
       style={{ position: "absolute", ...position, transform: scaleOps || undefined }}
     >

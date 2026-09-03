@@ -15,7 +15,7 @@ function CertCorner({ at }: { at: keyof typeof CORNER_POSITION }) {
   return (
     <svg
       viewBox="0 0 44 44"
-      className={`absolute h-9 w-9 ${CORNER_POSITION[at]}`}
+      className={`absolute h-14 w-14 ${CORNER_POSITION[at]}`}
       aria-hidden="true"
     >
       {SPRIG_STEMS.map((d) => (
@@ -239,18 +239,18 @@ export default async function LandingPage() {
             <CertCorner at="bottomLeft" />
             <CertCorner at="bottomRight" />
 
-            <SealIcon className="mb-2 h-9 w-9" />
-            <div className="text-[10px] tracking-[0.2em] text-ink">WEDDINGS FOR ONE</div>
-            <div className="mt-3 font-serif text-2xl font-semibold tracking-[0.1em] text-champagne">
+            <SealIcon className="mb-2 h-14 w-14" />
+            <div className="text-xs tracking-[0.2em] text-ink">WEDDINGS FOR ONE</div>
+            <div className="mt-3 font-serif text-4xl font-semibold tracking-[0.1em] text-champagne">
               CERTIFICATE
             </div>
-            <div className="text-[10px] tracking-[0.25em] text-ink">OF SELF-COMMITMENT</div>
+            <div className="text-xs tracking-[0.25em] text-ink">OF SELF-COMMITMENT</div>
             <div className="my-3 h-px w-14 bg-champagne" />
-            <div className="font-script text-4xl text-champagne">Alex Rivera</div>
-            <div className="mt-3 text-[10px] tracking-[0.15em] text-ink-soft">
+            <div className="font-script text-6xl text-champagne">Alex Rivera</div>
+            <div className="mt-3 text-xs tracking-[0.15em] text-ink-soft">
               COMMITTED TO THEMSELF ON
             </div>
-            <div className="font-script text-xl text-ink">the 14th of June</div>
+            <div className="font-script text-3xl text-ink">the 14th of June</div>
           </div>
         </div>
       </section>
