@@ -2,6 +2,39 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { SealIcon, Wordmark } from "@/components/monogram";
+import { LEAF_PATH, SPRIG_STEMS, SPRIG_LEAVES, SPRIG_DOTS } from "@/lib/cert-sprig";
+
+const CORNER_POSITION: Record<string, string> = {
+  topLeft: "top-2 left-2",
+  topRight: "top-2 right-2 -scale-x-100",
+  bottomLeft: "bottom-2 left-2 -scale-y-100",
+  bottomRight: "bottom-2 right-2 -scale-x-100 -scale-y-100",
+};
+
+function CertCorner({ at }: { at: keyof typeof CORNER_POSITION }) {
+  return (
+    <svg
+      viewBox="0 0 44 44"
+      className={`absolute h-9 w-9 ${CORNER_POSITION[at]}`}
+      aria-hidden="true"
+    >
+      {SPRIG_STEMS.map((d) => (
+        <path key={d} d={d} stroke="var(--champagne)" strokeWidth={0.6} fill="none" />
+      ))}
+      {SPRIG_LEAVES.map((leaf, i) => (
+        <path
+          key={i}
+          d={LEAF_PATH}
+          fill="var(--champagne)"
+          transform={`translate(${leaf.x} ${leaf.y}) rotate(${leaf.rotate}) scale(${leaf.scale})`}
+        />
+      ))}
+      {SPRIG_DOTS.map((dot, i) => (
+        <circle key={i} cx={dot.x} cy={dot.y} r={dot.r} fill="var(--champagne)" />
+      ))}
+    </svg>
+  );
+}
 
 export default async function LandingPage() {
   const supabase = await createClient();
@@ -201,10 +234,10 @@ export default async function LandingPage() {
         </div>
         <div className="flex aspect-3/4 items-center justify-center rounded bg-ink p-8">
           <div className="relative flex h-full w-full flex-col items-center justify-center gap-1 rounded-xs border border-champagne bg-ivory px-8 py-8 text-center">
-            <span className="absolute left-2.5 top-2.5 h-4 w-4 border-l border-t border-champagne/60" />
-            <span className="absolute right-2.5 top-2.5 h-4 w-4 border-r border-t border-champagne/60" />
-            <span className="absolute bottom-2.5 left-2.5 h-4 w-4 border-b border-l border-champagne/60" />
-            <span className="absolute bottom-2.5 right-2.5 h-4 w-4 border-b border-r border-champagne/60" />
+            <CertCorner at="topLeft" />
+            <CertCorner at="topRight" />
+            <CertCorner at="bottomLeft" />
+            <CertCorner at="bottomRight" />
 
             <SealIcon className="mb-2 h-9 w-9" />
             <div className="text-[10px] tracking-[0.2em] text-ink">WEDDINGS FOR ONE</div>

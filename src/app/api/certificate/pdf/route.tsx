@@ -7,6 +7,7 @@ import {
   View,
   Svg,
   Path,
+  Circle,
   Image,
   StyleSheet,
   Font,
@@ -14,6 +15,7 @@ import {
 } from "@react-pdf/renderer";
 import { createClient } from "@/lib/supabase/server";
 import type { Vibe } from "@/lib/types/database";
+import { LEAF_PATH, SPRIG_STEMS, SPRIG_LEAVES, SPRIG_DOTS } from "@/lib/cert-sprig";
 
 // WeddingsForOne design tokens (kept in sync with src/app/globals.css).
 const INK = "#20201D";
@@ -159,32 +161,45 @@ const styles = StyleSheet.create({
   },
 });
 
-function Corner({ rotate }: { rotate: 0 | 90 | 180 | 270 }) {
+type CornerPosition = "topLeft" | "topRight" | "bottomLeft" | "bottomRight";
+
+function Corner({ at }: { at: CornerPosition }) {
   const position =
-    rotate === 0
-      ? { top: 10, left: 10 }
-      : rotate === 90
-        ? { top: 10, right: 10 }
-        : rotate === 270
-          ? { bottom: 10, left: 10 }
-          : { bottom: 10, right: 10 };
+    at === "topLeft"
+      ? { top: 8, left: 8 }
+      : at === "topRight"
+        ? { top: 8, right: 8 }
+        : at === "bottomLeft"
+          ? { bottom: 8, left: 8 }
+          : { bottom: 8, right: 8 };
+
+  const mirrorX = at === "topRight" || at === "bottomRight";
+  const mirrorY = at === "bottomLeft" || at === "bottomRight";
+  const scaleOps = [mirrorX ? "scaleX(-1)" : "", mirrorY ? "scaleY(-1)" : ""]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <Svg width={44} height={44} style={{ position: "absolute", ...position }} viewBox="0 0 44 44">
-      <Path
-        d="M2,2 C14,2 14,14 26,14 M2,2 C2,14 14,14 14,26"
-        stroke={CHAMPAGNE}
-        strokeWidth={0.9}
-        fill="none"
-        transform={rotate ? `rotate(${rotate} 22 22)` : undefined}
-      />
-      <Path
-        d="M2,2 L9,2 M2,2 L2,9"
-        stroke={CHAMPAGNE}
-        strokeWidth={0.9}
-        fill="none"
-        transform={rotate ? `rotate(${rotate} 22 22)` : undefined}
-      />
+    <Svg
+      width={44}
+      height={44}
+      viewBox="0 0 44 44"
+      style={{ position: "absolute", ...position, transform: scaleOps || undefined }}
+    >
+      {SPRIG_STEMS.map((d) => (
+        <Path key={d} d={d} stroke={CHAMPAGNE} strokeWidth={0.6} fill="none" />
+      ))}
+      {SPRIG_LEAVES.map((leaf, i) => (
+        <Path
+          key={i}
+          d={LEAF_PATH}
+          fill={CHAMPAGNE}
+          transform={`translate(${leaf.x} ${leaf.y}) rotate(${leaf.rotate}) scale(${leaf.scale})`}
+        />
+      ))}
+      {SPRIG_DOTS.map((dot, i) => (
+        <Circle key={i} cx={dot.x} cy={dot.y} r={dot.r} fill={CHAMPAGNE} />
+      ))}
     </Svg>
   );
 }
@@ -235,10 +250,10 @@ function Certificate({ name, date, vowSummary }: CertificateProps) {
       <Page size="A4" style={styles.page}>
         <View style={styles.frameOuter}>
           <View style={styles.frameInner}>
-            <Corner rotate={0} />
-            <Corner rotate={90} />
-            <Corner rotate={270} />
-            <Corner rotate={180} />
+            <Corner at="topLeft" />
+            <Corner at="topRight" />
+            <Corner at="bottomLeft" />
+            <Corner at="bottomRight" />
 
             <Image src={sealDataUri} style={styles.seal} />
             <Text style={styles.brandLine}>WEDDINGS FOR ONE</Text>
