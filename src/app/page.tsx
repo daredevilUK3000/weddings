@@ -199,16 +199,25 @@ export default async function LandingPage() {
             that you chose yourself, ready to frame, print, or post.
           </p>
         </div>
-        <div className="flex aspect-3/4 items-center justify-center rounded bg-ink p-10">
-          <div className="flex h-full w-full flex-col items-center justify-center gap-2.5 rounded-xs border border-champagne bg-ivory px-8 py-8 text-center">
-            <div className="text-[11px] tracking-[0.25em] text-champagne">W · ONE</div>
-            <div className="mt-3 text-[11px] tracking-[0.04em] text-wine">
-              CERTIFICATE OF SELF-COMMITMENT
+        <div className="flex aspect-3/4 items-center justify-center rounded bg-ink p-8">
+          <div className="relative flex h-full w-full flex-col items-center justify-center gap-1 rounded-xs border border-champagne bg-ivory px-8 py-8 text-center">
+            <span className="absolute left-2.5 top-2.5 h-4 w-4 border-l border-t border-champagne/60" />
+            <span className="absolute right-2.5 top-2.5 h-4 w-4 border-r border-t border-champagne/60" />
+            <span className="absolute bottom-2.5 left-2.5 h-4 w-4 border-b border-l border-champagne/60" />
+            <span className="absolute bottom-2.5 right-2.5 h-4 w-4 border-b border-r border-champagne/60" />
+
+            <SealIcon className="mb-2 h-9 w-9" />
+            <div className="text-[10px] tracking-[0.2em] text-ink">WEDDINGS FOR ONE</div>
+            <div className="mt-3 font-serif text-2xl font-semibold tracking-[0.1em] text-champagne">
+              CERTIFICATE
             </div>
+            <div className="text-[10px] tracking-[0.25em] text-ink">OF SELF-COMMITMENT</div>
             <div className="my-3 h-px w-14 bg-champagne" />
-            <div className="font-serif text-xl">Alex Rivera</div>
-            <div className="text-[13px] text-ink-soft">committed to themself on</div>
-            <div className="font-serif text-base">the 14th of June</div>
+            <div className="font-script text-4xl text-champagne">Alex Rivera</div>
+            <div className="mt-3 text-[10px] tracking-[0.15em] text-ink-soft">
+              COMMITTED TO THEMSELF ON
+            </div>
+            <div className="font-script text-xl text-ink">the 14th of June</div>
           </div>
         </div>
       </section>

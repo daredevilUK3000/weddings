@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Cormorant_Garamond, Inter, Mrs_Saint_Delafield } from "next/font/google";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -15,6 +15,12 @@ const inter = Inter({
   weight: ["400", "500", "600"],
 });
 
+const script = Mrs_Saint_Delafield({
+  variable: "--font-script",
+  subsets: ["latin"],
+  weight: "400",
+});
+
 export const metadata: Metadata = {
   title: "WeddingsForOne — This is your ceremony",
   description:
@@ -25,7 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${inter.variable} h-full antialiased`}
+      className={`${cormorant.variable} ${inter.variable} ${script.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-ivory text-ink">{children}</body>
     </html>
