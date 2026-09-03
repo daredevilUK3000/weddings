@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { Monogram, Wordmark } from "@/components/monogram";
+import { SealIcon, Wordmark } from "@/components/monogram";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -32,9 +32,9 @@ export default function LoginPage() {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-sm flex-col justify-center gap-8 px-6">
-      <Link href="/" className="flex items-center gap-2.5 text-ink">
-        <Monogram className="h-7 w-7" />
-        <Wordmark />
+      <Link href="/" className="flex items-center gap-3 text-ink">
+        <SealIcon className="h-[112px] w-[112px]" />
+        <Wordmark className="text-[48px]" />
       </Link>
       <div>
         <h1 className="font-serif text-3xl font-medium">Welcome back</h1>

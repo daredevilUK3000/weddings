@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
-import { Monogram, Wordmark } from "@/components/monogram";
+import { SealIcon, Wordmark } from "@/components/monogram";
 
 export default async function LandingPage() {
   const supabase = await createClient();
@@ -15,9 +15,9 @@ export default async function LandingPage() {
   return (
     <div className="flex flex-1 flex-col">
       <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-7 sm:px-14">
-        <Link href="/" className="flex items-center gap-2.5 text-ink">
-          <Monogram className="h-7 w-7" />
-          <Wordmark />
+        <Link href="/" className="flex items-center gap-4 text-ink">
+          <SealIcon className="h-[88px] w-[88px]" />
+          <Wordmark className="text-[48px]" />
         </Link>
         <div className="flex items-center gap-9">
           <a href="#moments" className="hidden text-sm font-medium sm:inline">
@@ -235,9 +235,9 @@ export default async function LandingPage() {
       </section>
 
       <footer className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-8 text-[13px] text-ink-soft sm:px-14">
-        <span className="flex items-center gap-2 text-ink">
-          <Monogram className="h-5 w-5" />
-          <Wordmark className="text-sm" />
+        <span className="flex items-center gap-3 text-ink">
+          <SealIcon className="h-[56px] w-[56px]" />
+          <Wordmark className="text-[28px]" />
         </span>
         <span>A ceremony of one</span>
       </footer>

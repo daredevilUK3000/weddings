@@ -1,8 +1,22 @@
+import Image from "next/image";
+
 export function Wordmark({ className = "" }: { className?: string }) {
   return (
     <span className={`font-serif text-lg font-medium tracking-tight ${className}`}>
       Weddings for <span className="italic text-champagne">One</span>
     </span>
+  );
+}
+
+export function SealIcon({ className = "h-9 w-9" }: { className?: string }) {
+  return (
+    <Image
+      src="/brand/seal.png"
+      alt=""
+      width={176}
+      height={187}
+      className={className}
+    />
   );
 }
 
