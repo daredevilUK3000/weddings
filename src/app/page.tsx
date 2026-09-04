@@ -116,14 +116,57 @@ export default async function LandingPage() {
       </section>
 
       {/* VOW STRIP */}
-      <section className="mx-auto w-full max-w-3xl px-6 py-20 sm:px-14 sm:py-24">
-        <p className="font-serif text-2xl font-normal leading-snug sm:text-[34px]">
-          &ldquo;I promise to stop waiting for permission to celebrate my own life. Today, I
-          do.&rdquo;
-        </p>
-        <p className="mt-6 text-sm text-ink-soft">
-          — a vow drafted with your officiant, written for someone else&apos;s ceremony
-        </p>
+      <section className="relative overflow-hidden bg-ivory px-6 py-20 sm:px-14 sm:py-32">
+        <div className="mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-14 md:grid-cols-[0.8fr_1.2fr] md:gap-[72px]">
+          <div className="relative aspect-[3/4] overflow-hidden rounded-sm">
+            <Image
+              src="/images/pexels-tara-winstead-7111148.jpg"
+              alt="A tealight candle, lit"
+              fill
+              sizes="(min-width: 768px) 40vw, 100vw"
+              className="object-cover object-[50%_45%]"
+            />
+          </div>
+
+          <div className="text-center md:text-left">
+            <div className="mx-auto mb-9 flex h-10 w-10 items-center justify-center md:mx-0">
+              <svg viewBox="0 0 40 40" fill="none" className="h-full w-full" aria-hidden="true">
+                <circle cx="20" cy="20" r="19" stroke="var(--champagne)" strokeWidth={1} />
+                <text
+                  x="20"
+                  y="26"
+                  textAnchor="middle"
+                  fontFamily="var(--font-serif)"
+                  fontStyle="italic"
+                  fontSize="20"
+                  fill="var(--champagne)"
+                >
+                  1
+                </text>
+              </svg>
+            </div>
+
+            <p className="mb-8 text-[11.5px] font-semibold uppercase tracking-[0.16em] text-dusty-rose">
+              A vow, drafted with your officiant
+            </p>
+            <div className="mx-auto mb-8 h-px w-11 bg-champagne md:mx-0" />
+
+            <span
+              className="mb-[-6px] block font-serif text-[72px] italic leading-[0.5] text-champagne opacity-55 sm:text-[100px]"
+              aria-hidden="true"
+            >
+              &ldquo;
+            </span>
+            <p className="font-serif text-[28px] font-medium italic leading-[1.45] text-ink sm:text-4xl">
+              I promise to stop waiting for permission to celebrate my own life. Today, I do.
+            </p>
+
+            <div className="mx-auto mt-9 mb-6 h-px w-11 bg-champagne md:mx-0" />
+            <p className="text-[13px] text-ink-soft">
+              Written for someone else&apos;s ceremony — yours will sound like you
+            </p>
+          </div>
+        </div>
       </section>
 
       {/* THE OFFICIANT — editorial conversation treatment */}
