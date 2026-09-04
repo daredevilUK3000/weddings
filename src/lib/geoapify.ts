@@ -43,10 +43,12 @@ export async function geocodeLocation(
   return first ? { lat: first.properties.lat, lon: first.properties.lon } : null;
 }
 
-// Radius is intentionally generous (25km) — vendor categories like venues
-// or caterers are often worth traveling to, and OSM POI density is lower
-// than Google's index, so a tight radius risks empty results.
-const SEARCH_RADIUS_METERS = 25_000;
+// Radius is intentionally generous (60km) — confirmed empirically during the
+// migration spike (Limoges, FR): venue results roughly doubled and
+// photography results went from 2 to 5 going from 25km to 60km. OSM POI
+// density is lower than Google's index, so vendor categories worth
+// traveling for need a wide net; `bias=proximity` still sorts closest-first.
+const SEARCH_RADIUS_METERS = 60_000;
 
 export async function searchPlaces(
   categories: string[],

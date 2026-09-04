@@ -3,17 +3,19 @@ import { generateVendorRationale } from "@/lib/ai/vendor-rationale";
 import { geocodeLocation, searchPlaces, type GeoapifyPlace } from "@/lib/geoapify";
 
 // Maps our internal vendor category slugs to Geoapify/OSM place categories.
-// OSM's category taxonomy is POI-shaped (physical shops/venues), not
-// service-directory-shaped like Google's — several of these have no clean
-// equivalent and are flagged accordingly. Revisit after the coverage spike.
+// Verified against Geoapify's full category list and a live spike search
+// (Limoges, FR) during the Google -> Geoapify migration — see git history
+// for the earlier, less accurate guesses this replaced.
 const CATEGORY_GEOAPIFY: Record<string, string[]> = {
-  venue: ["entertainment.events_venue", "building.facility"], // no dedicated wedding-venue tag in OSM
-  photography: ["commercial.hobby.photo"], // this is a camera/photo retail shop tag, not "photographer service" — likely thin
-  catering: ["catering.restaurant"], // OSM doesn't distinguish standalone caterers from restaurants well
-  florist: ["commercial.florist"], // solid match
+  // No dedicated wedding-venue tag in OSM; combining these three gave
+  // relevant results in testing (reception halls, conference/event spaces).
+  venue: ["activity.events_venue", "tourism.sights.conference_centre", "building.facility"],
+  photography: ["service.photographer"], // confirmed: real photographer names, not camera shops
+  catering: ["catering.restaurant"], // OSM doesn't distinguish standalone caterers from restaurants
+  florist: ["commercial.florist"], // solid match, 10+ real florists in testing
   officiant: [], // no OSM equivalent — officiants aren't mapped as POIs
-  hair_makeup: ["service.beauty.hairdresser", "commercial.beauty"],
-  transport: ["service.car_rental"],
+  hair_makeup: ["service.beauty.hairdresser", "commercial.health_and_beauty"],
+  transport: ["rental.car"],
 };
 
 const CACHE_TTL_DAYS = 30;
