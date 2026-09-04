@@ -49,7 +49,7 @@ export async function POST(req: Request) {
 
   const { data: ceremony } = await supabase
     .from("ceremonies")
-    .select("vibe, budget_band, priority_ranking")
+    .select("vibe, budget_band, priority_ranking, location")
     .eq("id", ceremonyId)
     .eq("user_id", user.id)
     .single();
@@ -104,6 +104,17 @@ export async function POST(req: Request) {
       },
       { onConflict: "category_slug,location_key" },
     );
+  }
+
+  // Persist the search location on the ceremony so it survives navigation —
+  // otherwise the location field (and every "Find X" button) resets to
+  // empty/disabled the moment the user leaves and returns to this tab.
+  if (ceremony.location !== location) {
+    await supabase
+      .from("ceremonies")
+      .update({ location, updated_at: new Date().toISOString() })
+      .eq("id", ceremonyId)
+      .eq("user_id", user.id);
   }
 
   const { data: existing } = await supabase
