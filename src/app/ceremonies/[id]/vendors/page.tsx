@@ -33,7 +33,7 @@ export default async function VendorsPage({
 
   const { data: shortlist } = await supabase
     .from("vendor_shortlist")
-    .select("id, category_id, name, address, rating, price_level, ai_rationale, selected")
+    .select("id, category_id, name, address, ai_rationale, selected")
     .eq("ceremony_id", id)
     .order("created_at");
 
@@ -67,6 +67,27 @@ export default async function VendorsPage({
           categories={categories ?? []}
           initialShortlist={initialShortlist}
         />
+        <p className="text-xs text-ink-soft/70">
+          Vendor data{" "}
+          <a
+            href="https://www.openstreetmap.org/copyright"
+            target="_blank"
+            rel="noreferrer"
+            className="underline underline-offset-2 hover:text-ink"
+          >
+            © OpenStreetMap contributors
+          </a>
+          , via{" "}
+          <a
+            href="https://www.geoapify.com/"
+            target="_blank"
+            rel="noreferrer"
+            className="underline underline-offset-2 hover:text-ink"
+          >
+            Geoapify
+          </a>
+          .
+        </p>
       </main>
     </div>
   );

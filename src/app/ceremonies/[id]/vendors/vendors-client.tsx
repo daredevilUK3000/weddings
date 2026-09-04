@@ -20,8 +20,6 @@ interface ShortlistEntry {
   category_id: string;
   name: string;
   address: string | null;
-  rating: number | null;
-  price_level: number | null;
   ai_rationale: string | null;
   selected: boolean;
   outreach_draft: OutreachDraft | null;
@@ -56,11 +54,12 @@ export function VendorsClient({
     setSearching(null);
 
     if (res.ok) {
-      const { shortlist: newEntries } = await res.json();
+      const { shortlist: newEntries, warning } = await res.json();
       setShortlist((prev) => [
         ...prev,
         ...newEntries.map((e: ShortlistEntry) => ({ ...e, outreach_draft: null })),
       ]);
+      if (warning) alert(warning);
     } else {
       const { error } = await res.json();
       alert(error);
@@ -141,15 +140,10 @@ export function VendorsClient({
               key={v.id}
               className="flex flex-col gap-3 rounded-sm border border-ink/10 bg-white/60 p-5"
             >
-              <div className="flex items-baseline justify-between">
-                <h3 className="font-serif text-lg font-medium">{v.name}</h3>
-                {v.rating ? (
-                  <span className="text-sm text-champagne">★ {v.rating}</span>
-                ) : null}
-              </div>
+              <h3 className="font-serif text-lg font-medium">{v.name}</h3>
               {v.address ? <p className="text-sm text-ink-soft">{v.address}</p> : null}
               {v.ai_rationale ? (
-                <p className="border-l-2 border-champagne/50 pl-3 text-sm text-ink-soft">
+                <p className="border-l-2 border-champagne/50 pl-3 font-serif text-[15px] italic leading-relaxed text-ink">
                   {v.ai_rationale}
                 </p>
               ) : null}

@@ -5,28 +5,39 @@ import type { Vibe } from "@/lib/types/database";
 export interface VendorForRationale {
   name: string;
   category: string;
-  rating: number | null;
-  priceLevel: number | null;
   address: string | null;
 }
 
+// Geoapify/OSM data carries no rating or price-level signal, so the
+// rationale is now the primary (not secondary) trust signal a user sees —
+// it has to work harder on qualitative fit and must never imply a rating
+// it doesn't have.
 export async function generateVendorRationale(
   vendor: VendorForRationale,
   ctx: { vibe: Vibe; budgetBand: string | null; priorities: string[] },
 ): Promise<string> {
   const { text } = await generateText({
     model: FAST_MODEL,
-    prompt: `You are a wedding planner writing a one-to-two sentence note explaining why a
-vendor fits a client planning a solo wedding (sologamy — one person marrying themselves).
+    prompt: `You are writing a short recommendation for a vendor, to help a client
+planning a solo wedding ceremony decide whether to shortlist them.
 
-Vendor: ${vendor.name} (${vendor.category})
-Rating: ${vendor.rating ?? "unrated"} | Price level: ${vendor.priceLevel ?? "unknown"} | ${vendor.address ?? ""}
-Client vibe: ${ctx.vibe}
-Budget band: ${ctx.budgetBand ?? "not specified"}
-Client priorities, ranked: ${ctx.priorities.join(", ") || "not specified"}
+You do not have access to review ratings or scores for this vendor. Do not reference
+or imply a rating, review count, or popularity — base the recommendation entirely on
+how well the vendor's category, location, and any available details match the client's
+stated vibe, budget, and priorities.
 
-Write ONLY the 1-2 sentence rationale, as personalized planner commentary — not a generic
-directory blurb. No preamble, no quotes around it.`,
+Vendor name: ${vendor.name}
+Category: ${vendor.category}
+Location: ${vendor.address ?? "not specified"}
+Client vibe/tone: ${ctx.vibe}
+Client budget band: ${ctx.budgetBand ?? "not specified"}
+Client priorities: ${ctx.priorities.join(", ") || "not specified"}
+
+Write a 1-2 sentence rationale explaining why this vendor could be a good fit for this
+specific client's ceremony. Be concrete and specific rather than generic — reference the
+vibe/style match directly. If you genuinely don't have enough information to say anything
+specific and credible, keep the rationale brief and honest rather than inventing detail
+that isn't there. No preamble, no quotes around it.`,
   });
 
   return text.trim();

@@ -131,8 +131,6 @@ export interface Database {
           place_id: string;
           name: string;
           address: string | null;
-          rating: number | null;
-          price_level: number | null;
           ai_rationale: string | null;
           selected: boolean;
           created_at: string;
@@ -144,8 +142,6 @@ export interface Database {
           place_id: string;
           name: string;
           address?: string | null;
-          rating?: number | null;
-          price_level?: number | null;
           ai_rationale?: string | null;
           selected?: boolean;
           created_at?: string;
@@ -157,11 +153,33 @@ export interface Database {
           place_id: string;
           name: string;
           address: string | null;
-          rating: number | null;
-          price_level: number | null;
           ai_rationale: string | null;
           selected: boolean;
           created_at: string;
+        }>;
+        Relationships: [];
+      };
+      vendor_cache: {
+        Row: {
+          id: string;
+          category_slug: string;
+          location_key: string;
+          results: unknown;
+          fetched_at: string;
+        };
+        Insert: {
+          id?: string;
+          category_slug: string;
+          location_key: string;
+          results: unknown;
+          fetched_at?: string;
+        };
+        Update: Partial<{
+          id: string;
+          category_slug: string;
+          location_key: string;
+          results: unknown;
+          fetched_at: string;
         }>;
         Relationships: [];
       };

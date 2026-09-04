@@ -1,31 +1,32 @@
 import { createClient } from "@/lib/supabase/server";
 import { generateVendorRationale } from "@/lib/ai/vendor-rationale";
+import { geocodeLocation, searchPlaces, type GeoapifyPlace } from "@/lib/geoapify";
 
-// Maps our internal vendor category slugs to Google Places "included types".
-// See https://developers.google.com/maps/documentation/places/web-service/place-types
-const CATEGORY_PLACE_TYPES: Record<string, string[]> = {
-  venue: ["wedding_venue", "banquet_hall", "event_venue"],
-  photography: ["photographer"],
-  catering: ["caterer"],
-  florist: ["florist"],
-  officiant: ["wedding_officiant"],
-  hair_makeup: ["hair_salon", "beauty_salon"],
-  transport: ["car_rental", "limousine_service"],
+// Maps our internal vendor category slugs to Geoapify/OSM place categories.
+// OSM's category taxonomy is POI-shaped (physical shops/venues), not
+// service-directory-shaped like Google's — several of these have no clean
+// equivalent and are flagged accordingly. Revisit after the coverage spike.
+const CATEGORY_GEOAPIFY: Record<string, string[]> = {
+  venue: ["entertainment.events_venue", "building.facility"], // no dedicated wedding-venue tag in OSM
+  photography: ["commercial.hobby.photo"], // this is a camera/photo retail shop tag, not "photographer service" — likely thin
+  catering: ["catering.restaurant"], // OSM doesn't distinguish standalone caterers from restaurants well
+  florist: ["commercial.florist"], // solid match
+  officiant: [], // no OSM equivalent — officiants aren't mapped as POIs
+  hair_makeup: ["service.beauty.hairdresser", "commercial.beauty"],
+  transport: ["service.car_rental"],
 };
 
-interface PlacesSearchResult {
-  id: string;
-  displayName?: { text: string };
-  formattedAddress?: string;
-  rating?: number;
-  priceLevel?: string;
+const CACHE_TTL_DAYS = 30;
+
+function cacheLocationKey(location: string): string {
+  return location.trim().toLowerCase();
 }
 
 export async function POST(req: Request) {
-  const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+  const apiKey = process.env.GEOAPIFY_API_KEY;
   if (!apiKey) {
     return Response.json(
-      { error: "GOOGLE_PLACES_API_KEY is not configured on the server." },
+      { error: "GEOAPIFY_API_KEY is not configured on the server." },
       { status: 500 },
     );
   }
@@ -61,42 +62,62 @@ export async function POST(req: Request) {
     return Response.json({ error: "Ceremony or category not found" }, { status: 404 });
   }
 
-  const includedTypes = CATEGORY_PLACE_TYPES[categorySlug] ?? [categorySlug];
-
-  const placesRes = await fetch("https://places.googleapis.com/v1/places:searchText", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Goog-Api-Key": apiKey,
-      "X-Goog-FieldMask":
-        "places.id,places.displayName,places.formattedAddress,places.rating,places.priceLevel",
-    },
-    body: JSON.stringify({
-      textQuery: `${category.name} near ${location}`,
-      includedType: includedTypes[0],
-      maxResultCount: 8,
-    }),
-  });
-
-  if (!placesRes.ok) {
-    const errText = await placesRes.text();
-    return Response.json({ error: `Places API error: ${errText}` }, { status: 502 });
+  const geoapifyCategories = CATEGORY_GEOAPIFY[categorySlug] ?? [];
+  if (geoapifyCategories.length === 0) {
+    return Response.json({
+      shortlist: [],
+      warning: `"${category.name}" isn't well covered by OpenStreetMap data yet — try searching manually.`,
+    });
   }
 
-  const { places = [] } = (await placesRes.json()) as { places?: PlacesSearchResult[] };
+  const locationKey = cacheLocationKey(location);
+  let places: GeoapifyPlace[];
+
+  const { data: cached } = await supabase
+    .from("vendor_cache")
+    .select("results, fetched_at")
+    .eq("category_slug", categorySlug)
+    .eq("location_key", locationKey)
+    .single();
+
+  const cacheIsFresh =
+    cached &&
+    Date.now() - new Date(cached.fetched_at).getTime() < CACHE_TTL_DAYS * 24 * 60 * 60 * 1000;
+
+  if (cacheIsFresh) {
+    places = cached.results as GeoapifyPlace[];
+  } else {
+    const coords = await geocodeLocation(location, apiKey);
+    if (!coords) {
+      return Response.json({ error: "Could not find that location" }, { status: 400 });
+    }
+    places = await searchPlaces(geoapifyCategories, coords, apiKey);
+
+    await supabase.from("vendor_cache").upsert(
+      {
+        category_slug: categorySlug,
+        location_key: locationKey,
+        results: places,
+        fetched_at: new Date().toISOString(),
+      },
+      { onConflict: "category_slug,location_key" },
+    );
+  }
+
+  const { data: existing } = await supabase
+    .from("vendor_shortlist")
+    .select("place_id")
+    .eq("ceremony_id", ceremonyId)
+    .eq("category_id", category.id);
+  const existingPlaceIds = new Set((existing ?? []).map((row) => row.place_id));
 
   const priorityRanking = (ceremony.priority_ranking as string[]) ?? [];
+  const newPlaces = places.filter((p) => !existingPlaceIds.has(p.placeId)).slice(0, 5);
 
   const shortlist = await Promise.all(
-    places.slice(0, 5).map(async (place) => {
+    newPlaces.map(async (place) => {
       const rationale = await generateVendorRationale(
-        {
-          name: place.displayName?.text ?? "Unknown vendor",
-          category: category.name,
-          rating: place.rating ?? null,
-          priceLevel: place.priceLevel ? Number(place.priceLevel) : null,
-          address: place.formattedAddress ?? null,
-        },
+        { name: place.name, category: category.name, address: place.address },
         {
           vibe: ceremony.vibe,
           budgetBand: ceremony.budget_band,
@@ -109,11 +130,9 @@ export async function POST(req: Request) {
         .insert({
           ceremony_id: ceremonyId,
           category_id: category.id,
-          place_id: place.id,
-          name: place.displayName?.text ?? "Unknown vendor",
-          address: place.formattedAddress ?? null,
-          rating: place.rating ?? null,
-          price_level: place.priceLevel ? Number(place.priceLevel) : null,
+          place_id: place.placeId,
+          name: place.name,
+          address: place.address,
           ai_rationale: rationale,
         })
         .select()
