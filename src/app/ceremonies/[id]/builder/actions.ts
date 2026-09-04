@@ -52,8 +52,13 @@ export async function reorderMoment(
   const a = moments[index];
   const b = moments[swapWith];
 
-  await supabase.from("ceremony_timeline").update({ order_index: b.order_index }).eq("id", a.id);
-  await supabase.from("ceremony_timeline").update({ order_index: a.order_index }).eq("id", b.id);
+  const [{ error: errorA }, { error: errorB }] = await Promise.all([
+    supabase.from("ceremony_timeline").update({ order_index: b.order_index }).eq("id", a.id),
+    supabase.from("ceremony_timeline").update({ order_index: a.order_index }).eq("id", b.id),
+  ]);
+  if (errorA || errorB) {
+    throw new Error(errorA?.message ?? errorB?.message ?? "Failed to reorder moment");
+  }
 
   revalidatePath(`/ceremonies/${ceremonyId}/builder`);
 }

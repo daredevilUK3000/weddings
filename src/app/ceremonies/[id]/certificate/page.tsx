@@ -37,6 +37,9 @@ export default async function CertificatePage({
           <div>
             <p className="text-sm font-medium text-wine">Something to keep</p>
             <h1 className="font-serif text-3xl font-medium">Certificate of Self-Commitment</h1>
+            <p className="mt-2 text-sm text-ink-soft">
+              Print it, frame it, keep it somewhere you&apos;ll see it.
+            </p>
           </div>
           <a
             href={pdfUrl}

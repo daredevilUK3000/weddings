@@ -5,7 +5,9 @@ const { getUser, single, makeSupabaseChain } = vi.hoisted(() => {
   const single = vi.fn();
   function makeSupabaseChain() {
     const eq2 = vi.fn(() => ({ single }));
-    const eq1 = vi.fn(() => ({ eq: eq2 }));
+    // eq1's result is used both as `.eq().eq().single()` (ceremonies lookup)
+    // and `.eq().single()` (profiles lookup) — support both shapes.
+    const eq1 = vi.fn(() => ({ eq: eq2, single }));
     const select = vi.fn(() => ({ eq: eq1 }));
     const from = vi.fn((_table: string) => ({ select }));
     return { from, select, eq1, eq2 };

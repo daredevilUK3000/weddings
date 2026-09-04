@@ -34,6 +34,12 @@ export async function POST(req: Request) {
     return new Response("Ceremony not found", { status: 404 });
   }
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("name")
+    .eq("id", user.id)
+    .single();
+
   const result = streamText({
     model: CHAT_MODEL,
     system: officiantSystemPrompt({
@@ -41,6 +47,7 @@ export async function POST(req: Request) {
       reason: ceremony.reason,
       guestCount: ceremony.guest_count,
       location: ceremony.location,
+      clientName: profile?.name ?? null,
     }),
     messages: await convertToModelMessages(messages),
   });

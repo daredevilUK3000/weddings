@@ -108,8 +108,8 @@ export default async function BuilderPage({
             <ul>
               {timeline?.map((moment, i) => (
                 <li
-                  key={moment.id}
-                  className="flex items-center justify-between gap-4 border-t border-ink/8 px-4 py-3.5 first:border-t-0"
+                  key={`${moment.id}-${moment.order_index}`}
+                  className="flex animate-[fadeIn_0.3s_ease] items-center justify-between gap-4 border-t border-ink/8 px-4 py-3.5 first:border-t-0"
                 >
                   <div className="flex items-baseline gap-4">
                     <span className="w-6 font-sans text-xs tabular-nums text-champagne">

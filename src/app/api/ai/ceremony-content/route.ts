@@ -26,12 +26,19 @@ export async function POST(req: Request) {
     return Response.json({ error: "Ceremony not found" }, { status: 404 });
   }
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("name")
+    .eq("id", user.id)
+    .single();
+
   const content = await generateCeremonyContent(
     {
       vibe: ceremony.vibe,
       reason: ceremony.reason,
       guestCount: ceremony.guest_count,
       location: ceremony.location,
+      clientName: profile?.name ?? null,
     },
     interviewTranscript,
   );

@@ -7,7 +7,9 @@ const { getUser, selectSingle, updateResult, makeSupabaseChain } = vi.hoisted(()
 
   function makeSupabaseChain() {
     const selectEq2 = vi.fn(() => ({ single: selectSingle }));
-    const selectEq1 = vi.fn(() => ({ eq: selectEq2 }));
+    // selectEq1's result is used both as `.eq().eq().single()` (ceremonies
+    // lookup) and `.eq().single()` (profiles lookup) — support both shapes.
+    const selectEq1 = vi.fn(() => ({ eq: selectEq2, single: selectSingle }));
     const select = vi.fn(() => ({ eq: selectEq1 }));
 
     const updateEq2 = vi.fn(() => updateResult());
@@ -92,7 +94,13 @@ describe("POST /api/ai/ceremony-content", () => {
     );
 
     expect(generateCeremonyContent).toHaveBeenCalledWith(
-      { vibe: "funny", reason: "just because", guestCount: 5, location: "Bristol" },
+      {
+        vibe: "funny",
+        reason: "just because",
+        guestCount: 5,
+        location: "Bristol",
+        clientName: null,
+      },
       "Client: hi\nOfficiant: hello",
     );
     expect(chain.update).toHaveBeenCalledWith(

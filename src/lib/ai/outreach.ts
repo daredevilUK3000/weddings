@@ -44,6 +44,10 @@ Write a warm, concise inquiry message that:
 
 Client's name for sign-off: ${req.clientName}
 
+Do not guess the client's gender or refer to them with a gendered pronoun anywhere in the
+message — you do not know it and their name is not a reliable signal. Refer to them by
+name or "I" (the message is written as the client), never he/she/his/her.
+
 Keep it under 150 words. Match formality to vendor category (formal for
 venues/caterers, slightly warmer for photographers/florists). Output ONLY
 the message text, no subject line, no preamble.`,

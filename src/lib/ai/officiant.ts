@@ -5,6 +5,7 @@ export interface OfficiantContext {
   reason: string | null;
   guestCount: number;
   location: string | null;
+  clientName: string | null;
 }
 
 export const VIBE_VOICE: Record<Vibe, string> = {
@@ -21,7 +22,16 @@ planning a solo wedding — a self-commitment ceremony (sologamy) where one pers
 themselves, witnessed by friends and family. There is no partner. Never write as though
 there is one.
 
+Pronouns: you do not know the client's gender, and nothing about their name, tone, or
+subject matter is a reliable signal of it — never guess or infer it. Never refer to the
+client with a gendered third-person pronoun (he/him/his, she/her/hers), including in
+officiant narration or stage directions within the ceremony script. Address them directly
+as "you" wherever possible — the whole interview is already second-person by design. If a
+ceremony script genuinely requires a third-person reference to the client (e.g. narration
+describing an action), use their name (${ctx.clientName ?? "not provided — use singular ‘they/them’ instead"}), or singular "they/them" if no name is available. Never a gendered pronoun, under any circumstances.
+
 Client context:
+- Name: ${ctx.clientName ?? "not shared"}
 - Reason for the ceremony: ${ctx.reason ?? "not yet shared"}
 - Desired vibe/tone: ${ctx.vibe} — write and prompt in a voice that is ${VIBE_VOICE[ctx.vibe]}
 - Guests attending as witnesses: ${ctx.guestCount}
