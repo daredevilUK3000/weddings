@@ -16,6 +16,7 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import type { Vibe } from "@/lib/types/database";
 import { LEAF_PATH, SPRIG_STEMS, SPRIG_LEAVES, SPRIG_DOTS } from "@/lib/cert-sprig";
+import { formatCeremonyDate } from "@/lib/format-ceremony-date";
 
 // WeddingsForOne design tokens (kept in sync with src/app/globals.css).
 const INK = "#20201D";
@@ -216,22 +217,6 @@ function Rule() {
       <View style={styles.ruleLine} />
     </View>
   );
-}
-
-function formatCeremonyDate(isoDate: string): string {
-  const [year, month, day] = isoDate.split("-").map(Number);
-  const date = new Date(Date.UTC(year, month - 1, day));
-  const dayNum = date.getUTCDate();
-  const suffix =
-    dayNum % 10 === 1 && dayNum !== 11
-      ? "st"
-      : dayNum % 10 === 2 && dayNum !== 12
-        ? "nd"
-        : dayNum % 10 === 3 && dayNum !== 13
-          ? "rd"
-          : "th";
-  const monthName = date.toLocaleDateString("en-US", { month: "long", timeZone: "UTC" });
-  return `the ${dayNum}${suffix} of ${monthName}`;
 }
 
 interface CertificateProps {

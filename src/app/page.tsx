@@ -2,39 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { SealIcon, Wordmark } from "@/components/monogram";
-import { LEAF_PATH, SPRIG_STEMS, SPRIG_LEAVES, SPRIG_DOTS } from "@/lib/cert-sprig";
-
-const CORNER_POSITION: Record<string, string> = {
-  topLeft: "top-2 left-2",
-  topRight: "top-2 right-2 -scale-x-100",
-  bottomLeft: "bottom-2 left-2 -scale-y-100",
-  bottomRight: "bottom-2 right-2 -scale-x-100 -scale-y-100",
-};
-
-function CertCorner({ at }: { at: keyof typeof CORNER_POSITION }) {
-  return (
-    <svg
-      viewBox="0 0 44 44"
-      className={`absolute h-14 w-14 ${CORNER_POSITION[at]}`}
-      aria-hidden="true"
-    >
-      {SPRIG_STEMS.map((d) => (
-        <path key={d} d={d} stroke="var(--champagne)" strokeWidth={0.6} fill="none" />
-      ))}
-      {SPRIG_LEAVES.map((leaf, i) => (
-        <path
-          key={i}
-          d={LEAF_PATH}
-          fill="var(--champagne)"
-          transform={`translate(${leaf.x} ${leaf.y}) rotate(${leaf.rotate}) scale(${leaf.scale})`}
-        />
-      ))}
-      {SPRIG_DOTS.map((dot, i) => (
-        <circle key={i} cx={dot.x} cy={dot.y} r={dot.r} fill="var(--champagne)" />
-      ))}
-    </svg>
-  );
-}
+import { TaglineRotator } from "@/components/landing/tagline-rotator";
+import { VowPromptPreview } from "@/components/landing/vow-prompt-preview";
+import { CertificatePersonalizer } from "@/components/landing/certificate-personalizer";
+import { FaqAccordion } from "@/components/landing/faq-accordion";
 
 export default async function LandingPage() {
   const supabase = await createClient();
@@ -58,6 +29,9 @@ export default async function LandingPage() {
           </a>
           <a href="#certificate" className="hidden text-sm font-medium sm:inline">
             Certificate
+          </a>
+          <a href="#faq" className="hidden text-sm font-medium sm:inline">
+            FAQ
           </a>
           {!user ? (
             <Link href="/login" className="hidden text-sm font-medium sm:inline">
@@ -95,9 +69,9 @@ export default async function LandingPage() {
             Today, I choose myself.
           </h1>
           <p className="mt-7 max-w-md text-lg text-ivory/85">
-            You&apos;ve built a life worth celebrating. This is the ceremony that celebrates
-            you — your vows, your officiant, your day, entirely yours.
+            You&apos;ve built a life worth celebrating.
           </p>
+          <TaglineRotator />
           <div className="mt-9 flex flex-wrap items-center gap-4">
             <Link
               href={primaryHref}
@@ -186,23 +160,7 @@ export default async function LandingPage() {
             <div>
               <div className="mb-3 font-serif text-sm text-wine">The officiant</div>
               <h3 className="text-2xl font-medium">Someone needs to ask you the right questions.</h3>
-              <div className="mt-6 flex flex-col gap-4">
-                <div>
-                  <p className="text-xs font-medium uppercase tracking-wide text-ink-soft">
-                    Your officiant
-                  </p>
-                  <p className="mt-1 font-serif text-lg italic leading-relaxed">
-                    &ldquo;Why did you choose this moment to celebrate yourself?&rdquo;
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs font-medium uppercase tracking-wide text-ink-soft">You</p>
-                  <p className="mt-1 font-serif text-lg italic leading-relaxed">
-                    &ldquo;Because I spent years waiting for something to happen before I felt I
-                    deserved to celebrate.&rdquo;
-                  </p>
-                </div>
-              </div>
+              <VowPromptPreview />
               <p className="mt-6 text-base leading-relaxed text-ink-soft">
                 Your words become your ceremony — a script and vows that sound like you, drafted
                 by an AI officiant that listens before it writes.
@@ -275,27 +233,17 @@ export default async function LandingPage() {
             that you chose yourself, ready to frame, print, or post.
           </p>
         </div>
-        <div className="flex aspect-3/4 items-center justify-center rounded bg-ink p-8">
-          <div className="relative flex h-full w-full flex-col items-center justify-center gap-1 rounded-xs border border-champagne bg-ivory px-8 py-8 text-center">
-            <CertCorner at="topLeft" />
-            <CertCorner at="topRight" />
-            <CertCorner at="bottomLeft" />
-            <CertCorner at="bottomRight" />
+        <CertificatePersonalizer />
+      </section>
 
-            <SealIcon className="mb-2 h-14 w-14" />
-            <div className="text-xs tracking-[0.2em] text-ink">WEDDINGS FOR ONE</div>
-            <div className="mt-3 font-serif text-4xl font-semibold tracking-[0.1em] text-champagne">
-              CERTIFICATE
-            </div>
-            <div className="text-xs tracking-[0.25em] text-ink">OF SELF-COMMITMENT</div>
-            <div className="my-3 h-px w-14 bg-champagne" />
-            <div className="font-script text-6xl text-champagne">Alex Rivera</div>
-            <div className="mt-3 text-xs tracking-[0.15em] text-ink-soft">
-              COMMITTED TO THEMSELF ON
-            </div>
-            <div className="font-script text-3xl text-ink">the 14th of June</div>
-          </div>
+      {/* FAQ */}
+      <section id="faq" className="border-t border-ink/10 bg-parchment px-6 py-24 sm:px-14 sm:py-28">
+        <div className="mx-auto mb-14 max-w-xl text-center">
+          <h2 className="font-serif text-3xl font-medium leading-tight sm:text-4xl">
+            Questions people ask before they begin
+          </h2>
         </div>
+        <FaqAccordion />
       </section>
 
       {/* TRUST SIGNAL — marketing copy is exempt from the in-product AI-invisibility rule */}
