@@ -1,11 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
-import { SealIcon, Wordmark } from "@/components/monogram";
+import { MarketingNav, MarketingFooter } from "@/components/marketing-chrome";
 import { TaglineRotator } from "@/components/landing/tagline-rotator";
 import { VowPromptPreview } from "@/components/landing/vow-prompt-preview";
 import { CertificatePersonalizer } from "@/components/landing/certificate-personalizer";
-import { FaqAccordion } from "@/components/landing/faq-accordion";
 
 export default async function LandingPage() {
   const supabase = await createClient();
@@ -18,34 +17,7 @@ export default async function LandingPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-7 sm:px-14">
-        <Link href="/" className="flex items-center gap-4 text-ink">
-          <SealIcon className="h-[88px] w-[88px]" />
-          <Wordmark className="text-[48px]" />
-        </Link>
-        <div className="flex items-center gap-9">
-          <a href="#moments" className="hidden text-sm font-medium sm:inline">
-            How it works
-          </a>
-          <a href="#certificate" className="hidden text-sm font-medium sm:inline">
-            Certificate
-          </a>
-          <a href="#faq" className="hidden text-sm font-medium sm:inline">
-            FAQ
-          </a>
-          {!user ? (
-            <Link href="/login" className="hidden text-sm font-medium sm:inline">
-              Sign in
-            </Link>
-          ) : null}
-          <Link
-            href={primaryHref}
-            className="rounded-sm bg-ink px-5 py-2.5 text-sm font-medium text-ivory transition-all hover:-translate-y-0.5 hover:bg-wine"
-          >
-            {primaryLabel}
-          </Link>
-        </div>
-      </nav>
+      <MarketingNav isAuthenticated={!!user} primaryHref={primaryHref} primaryLabel={primaryLabel} />
 
       {/* HERO */}
       <section className="relative flex min-h-[88vh] items-end overflow-hidden rounded-b">
@@ -236,21 +208,24 @@ export default async function LandingPage() {
         <CertificatePersonalizer />
       </section>
 
-      {/* FAQ */}
-      <section id="faq" className="border-t border-ink/10 bg-parchment px-6 py-24 sm:px-14 sm:py-28">
-        <div className="mx-auto mb-14 max-w-xl text-center">
-          <h2 className="font-serif text-3xl font-medium leading-tight sm:text-4xl">
-            Questions people ask before they begin
-          </h2>
-        </div>
-        <FaqAccordion />
-      </section>
-
       {/* TRUST SIGNAL — marketing copy is exempt from the in-product AI-invisibility rule */}
       <section className="border-t border-ink/10 px-6 py-14 text-center sm:px-14">
         <p className="mx-auto max-w-lg text-sm text-ink-soft">
           One of the first AI-powered ceremony platforms built for a wedding of one — an AI
           officiant and planner working quietly behind a ceremony that feels entirely human.
+        </p>
+      </section>
+
+      {/* FAQ TEASER — deliberately minimal; the full FAQ lives at /faq */}
+      <section className="border-t border-ink/10 px-6 py-10 text-center sm:px-14">
+        <p className="text-sm text-ink-soft">
+          Wondering if this is for you?{" "}
+          <Link
+            href="/faq"
+            className="text-ink underline decoration-champagne/70 underline-offset-4 transition-colors hover:text-wine"
+          >
+            Read the FAQ
+          </Link>
         </p>
       </section>
 
@@ -267,13 +242,7 @@ export default async function LandingPage() {
         </Link>
       </section>
 
-      <footer className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-8 text-[13px] text-ink-soft sm:px-14">
-        <span className="flex items-center gap-3 text-ink">
-          <SealIcon className="h-[56px] w-[56px]" />
-          <Wordmark className="text-[28px]" />
-        </span>
-        <span>A ceremony of one</span>
-      </footer>
+      <MarketingFooter />
     </div>
   );
 }

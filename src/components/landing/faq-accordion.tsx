@@ -1,26 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import type { Faq } from "@/lib/faq-data";
 
-const FAQS = [
-  {
-    question: "Is this legally binding?",
-    answer:
-      "No. A Weddings for One ceremony is a personal ritual and commitment to yourself — not a legal marriage, and it carries no legal status, rights, or obligations. It's a way to formally mark a choice you're making about your own life, nothing more and nothing less.",
-  },
-  {
-    question: "Do people do this alone, or with guests?",
-    answer:
-      "Both. Some ceremonies are entirely solo — just you, your officiant, and the moment. Others are witnessed, with friends and family invited to be there for it. You choose the guest count when you build your ceremony, and everything else adapts to match.",
-  },
-];
-
-export function FaqAccordion() {
+export function FaqAccordion({ faqs }: { faqs: Faq[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
     <div className="mx-auto w-full max-w-2xl divide-y divide-ink/10 border-t border-b border-ink/10">
-      {FAQS.map((faq, i) => {
+      {faqs.map((faq, i) => {
         const isOpen = openIndex === i;
         return (
           <div key={faq.question}>
@@ -28,9 +16,12 @@ export function FaqAccordion() {
               type="button"
               onClick={() => setOpenIndex(isOpen ? null : i)}
               aria-expanded={isOpen}
-              className="flex w-full items-center justify-between gap-6 py-6 text-left"
+              className="flex w-full items-start gap-5 py-6 text-left"
             >
-              <span className="font-serif text-xl font-medium text-ink sm:text-[22px]">
+              <span className="mt-0.5 w-8 shrink-0 font-serif text-sm italic text-champagne">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span className="flex-1 font-serif text-xl font-medium text-ink sm:text-[22px]">
                 {faq.question}
               </span>
               <span
@@ -47,7 +38,7 @@ export function FaqAccordion() {
                 isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
               }`}
             >
-              <div className="min-h-0">
+              <div className="min-h-0 pl-[3.25rem]">
                 <p className="pb-6 text-base leading-relaxed text-ink-soft">{faq.answer}</p>
               </div>
             </div>
