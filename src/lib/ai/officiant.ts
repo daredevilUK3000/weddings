@@ -7,7 +7,7 @@ export interface OfficiantContext {
   location: string | null;
 }
 
-const VIBE_VOICE: Record<Vibe, string> = {
+export const VIBE_VOICE: Record<Vibe, string> = {
   spiritual: "warm, reverent, and grounded in ritual — never saccharine",
   glam: "celebratory, bold, a little theatrical, full of confidence",
   minimalist: "spare, sincere, unfussy — every line earns its place",

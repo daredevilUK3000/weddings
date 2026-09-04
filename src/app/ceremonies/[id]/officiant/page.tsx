@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { OfficiantChat } from "./chat-client";
+import { OfficiantExperience } from "./experience-client";
+import { OfficiantIntro } from "./officiant-intro";
 import { AppHeader } from "@/components/app-header";
 import { CeremonyNav } from "@/components/ceremony-nav";
 
@@ -31,15 +32,11 @@ export default async function OfficiantPage({
       <AppHeader />
       <CeremonyNav ceremonyId={id} />
 
-      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-4 overflow-hidden px-6 py-6">
-        <div>
-          <p className="text-sm font-medium text-wine">A conversation, not a form</p>
-          <h1 className="font-serif text-2xl font-medium">Your Officiant</h1>
-          <p className="text-sm text-ink-soft">
-            An officiant who listens before it writes.
-          </p>
+      <main className="flex flex-1 flex-col overflow-y-auto md:grid md:grid-cols-[35%_65%]">
+        <div className="border-b border-ink/8 md:border-r md:border-b-0">
+          <OfficiantIntro />
         </div>
-        <OfficiantChat ceremonyId={id} />
+        <OfficiantExperience ceremonyId={id} />
       </main>
     </div>
   );
