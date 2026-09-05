@@ -46,6 +46,7 @@ export async function inviteWitness(ceremonyId: string, formData: FormData) {
   const relationship = String(formData.get("relationship") ?? "").trim() || null;
   const attendanceType = formData.get("attendance_type") as WitnessAttendanceType;
   const canSignCertificate = formData.get("can_sign_certificate") === "on";
+  const shareVows = formData.get("share_vows") === "on";
 
   if (!name || !email || !ATTENDANCE_TYPES.includes(attendanceType)) {
     throw new Error("Name, email, and attendance type are required.");
@@ -60,6 +61,7 @@ export async function inviteWitness(ceremonyId: string, formData: FormData) {
       relationship,
       attendance_type: attendanceType,
       can_sign_certificate: canSignCertificate,
+      share_vows: shareVows,
     })
     .select("id, invite_token")
     .single();
@@ -153,19 +155,15 @@ export async function requestSignature(ceremonyId: string, witnessId: string) {
   revalidatePath(`/ceremonies/${ceremonyId}/witnesses`);
 }
 
-export async function updateSharingSettings(ceremonyId: string, formData: FormData) {
+// The one manual override the sharing correction allows — everything else
+// a witness sees is derived from attendance_type (src/lib/witness-sharing.ts).
+export async function updateVowsSharing(ceremonyId: string, witnessId: string, share: boolean) {
   const supabase = await createClient();
   await supabase
-    .from("ceremonies")
-    .update({
-      share_vows: formData.get("share_vows") === "on",
-      share_ceremony_story: formData.get("share_ceremony_story") === "on",
-      share_programme: formData.get("share_programme") === "on",
-      share_certificate: formData.get("share_certificate") === "on",
-      share_photographs: formData.get("share_photographs") === "on",
-      share_livestream: formData.get("share_livestream") === "on",
-    })
-    .eq("id", ceremonyId);
+    .from("witnesses")
+    .update({ share_vows: share })
+    .eq("id", witnessId)
+    .eq("ceremony_id", ceremonyId);
 
   revalidatePath(`/ceremonies/${ceremonyId}/witnesses`);
 }

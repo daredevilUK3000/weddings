@@ -91,12 +91,6 @@ export interface Database {
           wedding_day_started_at: string | null;
           ceremony_started_at: string | null;
           livestream_url: string | null;
-          share_vows: boolean;
-          share_ceremony_story: boolean;
-          share_programme: boolean;
-          share_certificate: boolean;
-          share_photographs: boolean;
-          share_livestream: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -118,12 +112,6 @@ export interface Database {
           wedding_day_started_at?: string | null;
           ceremony_started_at?: string | null;
           livestream_url?: string | null;
-          share_vows?: boolean;
-          share_ceremony_story?: boolean;
-          share_programme?: boolean;
-          share_certificate?: boolean;
-          share_photographs?: boolean;
-          share_livestream?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -145,12 +133,6 @@ export interface Database {
           wedding_day_started_at: string | null;
           ceremony_started_at: string | null;
           livestream_url: string | null;
-          share_vows: boolean;
-          share_ceremony_story: boolean;
-          share_programme: boolean;
-          share_certificate: boolean;
-          share_photographs: boolean;
-          share_livestream: boolean;
           created_at: string;
           updated_at: string;
         }>;
@@ -339,6 +321,7 @@ export interface Database {
           relationship: string | null;
           attendance_type: WitnessAttendanceType;
           can_sign_certificate: boolean;
+          share_vows: boolean;
           invite_token: string;
           invited_at: string | null;
           opened_at: string | null;
@@ -355,6 +338,7 @@ export interface Database {
           relationship?: string | null;
           attendance_type: WitnessAttendanceType;
           can_sign_certificate?: boolean;
+          share_vows?: boolean;
           invite_token?: string;
           invited_at?: string | null;
           opened_at?: string | null;
@@ -371,6 +355,7 @@ export interface Database {
           relationship: string | null;
           attendance_type: WitnessAttendanceType;
           can_sign_certificate: boolean;
+          share_vows: boolean;
           invite_token: string;
           invited_at: string | null;
           opened_at: string | null;

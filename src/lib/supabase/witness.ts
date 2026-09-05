@@ -1,4 +1,5 @@
 import { createServiceClient } from "@/lib/supabase/service";
+import { computeSharedContent } from "@/lib/witness-sharing";
 import type {
   CeremonyStatus,
   SignatureType,
@@ -10,9 +11,11 @@ import type {
 // The Witness Portal (/witness/[token]) has no authenticated Supabase user —
 // this is the ONLY code path that reads witness/ceremony data on a witness's
 // behalf, and it is deliberately the single place that decides which
-// ceremony fields a witness is allowed to see (per the ceremony's own
-// share_* toggles). Every portal route should go through this rather than
-// querying Supabase directly, so that rule has one enforcement point.
+// ceremony fields a witness is allowed to see. Sharing is derived per
+// witness from attendance_type (src/lib/witness-sharing.ts), not a
+// ceremony-wide manual checklist. Every portal route should go through
+// this rather than querying Supabase directly, so that rule has one
+// enforcement point.
 
 export interface WitnessPortalData {
   witness: {
@@ -47,7 +50,7 @@ export async function getWitnessByToken(token: string): Promise<WitnessPortalDat
   const { data: witness } = await supabase
     .from("witnesses")
     .select(
-      "id, ceremony_id, name, relationship, attendance_type, can_sign_certificate, rsvp_status, checked_in_at",
+      "id, ceremony_id, name, relationship, attendance_type, can_sign_certificate, share_vows, rsvp_status, checked_in_at",
     )
     .eq("invite_token", token)
     .single();
@@ -56,16 +59,20 @@ export async function getWitnessByToken(token: string): Promise<WitnessPortalDat
 
   const { data: ceremony } = await supabase
     .from("ceremonies")
-    .select(
-      "status, vibe, date, start_time, location, livestream_url, vows, reason, share_vows, share_ceremony_story, share_programme, share_certificate, share_livestream",
-    )
+    .select("status, vibe, date, start_time, location, livestream_url, vows, reason")
     .eq("id", witness.ceremony_id)
     .single();
 
   if (!ceremony) return null;
 
+  const shared = computeSharedContent(
+    witness.attendance_type,
+    witness.can_sign_certificate,
+    witness.share_vows,
+  );
+
   let programme: { momentName: string; time: string | null }[] | null = null;
-  if (ceremony.share_programme) {
+  if (shared.programme) {
     const { data: timeline } = await supabase
       .from("ceremony_timeline")
       .select("moment_name, time")
@@ -109,11 +116,11 @@ export async function getWitnessByToken(token: string): Promise<WitnessPortalDat
       date: ceremony.date,
       startTime: ceremony.start_time,
       location: ceremony.location,
-      livestreamUrl: ceremony.share_livestream ? ceremony.livestream_url : null,
-      vows: ceremony.share_vows ? ceremony.vows : null,
-      ceremonyStory: ceremony.share_ceremony_story ? ceremony.reason : null,
+      livestreamUrl: shared.livestreamLink ? ceremony.livestream_url : null,
+      vows: shared.vows ? ceremony.vows : null,
+      ceremonyStory: shared.ceremonyStory ? ceremony.reason : null,
       programme,
-      shareCertificate: ceremony.share_certificate,
+      shareCertificate: shared.certificate,
     },
   };
 }

@@ -73,7 +73,7 @@ describe("getWitnessByToken", () => {
     expect(await getWitnessByToken("tok_abc")).toBeNull();
   });
 
-  it("hides vows and ceremony story when their share toggles are off, and surfaces existing contribution/signature", async () => {
+  it("derives sharing from attendance type: an in-person witness gets no livestream/vows/story, but sees the certificate because they can sign it", async () => {
     queueChain("witnesses", {
       data: {
         id: "witness-1",
@@ -82,6 +82,7 @@ describe("getWitnessByToken", () => {
         relationship: "Sister",
         attendance_type: "in_person",
         can_sign_certificate: true,
+        share_vows: false,
         rsvp_status: "accepted",
         checked_in_at: null,
       },
@@ -97,11 +98,6 @@ describe("getWitnessByToken", () => {
         livestream_url: "https://example.com/live",
         vows: "I promise...",
         reason: "A meaningful step",
-        share_vows: false,
-        share_ceremony_story: false,
-        share_programme: false,
-        share_certificate: true,
-        share_livestream: true,
       },
       error: null,
     });
@@ -119,7 +115,7 @@ describe("getWitnessByToken", () => {
     expect(result).not.toBeNull();
     expect(result!.ceremony.vows).toBeNull();
     expect(result!.ceremony.ceremonyStory).toBeNull();
-    expect(result!.ceremony.livestreamUrl).toBe("https://example.com/live");
+    expect(result!.ceremony.livestreamUrl).toBeNull();
     expect(result!.ceremony.shareCertificate).toBe(true);
     expect(result!.witness.contribution).toEqual({
       body: "So proud of you",
@@ -129,6 +125,45 @@ describe("getWitnessByToken", () => {
       signatureType: "typed",
       signedAt: "2027-06-01T15:30:00.000Z",
     });
+  });
+
+  it("surfaces the livestream link for an online witness, and vows only when the one manual override is set", async () => {
+    queueChain("witnesses", {
+      data: {
+        id: "witness-2",
+        ceremony_id: "ceremony-1",
+        name: "Daniel Price",
+        relationship: null,
+        attendance_type: "online",
+        can_sign_certificate: false,
+        share_vows: true,
+        rsvp_status: null,
+        checked_in_at: null,
+      },
+      error: null,
+    });
+    queueChain("ceremonies", {
+      data: {
+        status: "planning",
+        vibe: "glam",
+        date: "2027-06-01",
+        start_time: "15:00",
+        location: "Paris",
+        livestream_url: "https://example.com/live",
+        vows: "I promise...",
+        reason: "A meaningful step",
+      },
+      error: null,
+    });
+    queueChain("witness_contributions", { data: null, error: null });
+    queueChain("witness_signatures", { data: null, error: null });
+
+    const result = await getWitnessByToken("tok_def");
+
+    expect(result!.ceremony.livestreamUrl).toBe("https://example.com/live");
+    expect(result!.ceremony.vows).toBe("I promise...");
+    expect(result!.ceremony.ceremonyStory).toBeNull();
+    expect(result!.ceremony.shareCertificate).toBe(false);
   });
 });
 
