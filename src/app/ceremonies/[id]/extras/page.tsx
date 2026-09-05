@@ -47,10 +47,27 @@ export default async function ExtrasPage({
       <CeremonyNav ceremonyId={id} />
 
       <main className="mx-auto flex w-full max-w-2xl flex-col gap-12 px-6 py-12">
-        <h1 className="font-serif text-3xl font-medium">Extras</h1>
+        <div>
+          <p className="text-sm font-medium text-wine">The little things</p>
+          <h1 className="font-serif text-3xl font-medium">Extras</h1>
+          <p className="mt-2 text-sm text-ink-soft">
+            The touches that make this feel like a full wedding, not just a ceremony.
+          </p>
+        </div>
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-lg font-medium">Registry of Self</h2>
+          <div>
+            <h2 className="text-lg font-medium">Registry of Self</h2>
+            <p className="mt-1 max-w-xl text-sm text-ink-soft">
+              A normal wedding registry asks guests to buy the couple gifts. This one&apos;s
+              just for you — ideas for how to treat yourself now that you&apos;ve made this
+              commitment, from a trip to a tattoo to a course you&apos;ve been putting off.
+            </p>
+            <p className="mt-2 max-w-xl text-xs text-ink-soft">
+              Generate a set of five, shaped by your ceremony&apos;s vibe, your reason for
+              doing this, and your budget — generate again anytime for fresh ideas.
+            </p>
+          </div>
           <RegistryGenerator ceremonyId={id} />
         </section>
 
