@@ -47,10 +47,16 @@ function CeremonyCard({ c }: { c: Ceremony }) {
     { label: "Your place", done: !!c.location },
   ];
   const doneCount = stages.filter((s) => s.done).length;
+  // Once the officiant interview has produced a script, "continue" should
+  // mean "view what you built" (builder), not "start the interview over" —
+  // the officiant route always begins its conversation at question one.
+  const primaryHref = c.ceremony_script
+    ? `/ceremonies/${c.id}/builder`
+    : `/ceremonies/${c.id}/officiant`;
 
   return (
     <Link
-      href={`/ceremonies/${c.id}/officiant`}
+      href={primaryHref}
       className="flex flex-col gap-4 rounded-sm border border-ink/10 bg-white/40 px-6 py-6 transition-all hover:-translate-y-0.5 hover:border-champagne/50 hover:bg-white"
     >
       <div>
