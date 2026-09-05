@@ -61,7 +61,14 @@ export function VendorsClient({
         ...prev,
         ...newEntries.map((e: ShortlistEntry) => ({ ...e, outreach_draft: null })),
       ]);
-      if (warning) setNotice(warning);
+      if (warning) {
+        setNotice(warning);
+      } else if (newEntries.length === 0) {
+        const categoryName = categories.find((c) => c.slug === categorySlug)?.name ?? "that category";
+        setNotice(
+          `No new ${categoryName.toLowerCase()} vendors found near this location — you may have already added everyone we found.`,
+        );
+      }
     } else {
       const { error } = await res.json();
       setNotice(error);
