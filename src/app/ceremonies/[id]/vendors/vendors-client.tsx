@@ -43,8 +43,10 @@ export function VendorsClient({
   const [shortlist, setShortlist] = useState<ShortlistEntry[]>(initialShortlist);
   const [drafting, setDrafting] = useState<string | null>(null);
   const [asks, setAsks] = useState<Record<string, string>>({});
+  const [notice, setNotice] = useState<string | null>(null);
 
   async function search(categorySlug: string) {
+    setNotice(null);
     setSearching(categorySlug);
     const res = await fetch("/api/vendors/search", {
       method: "POST",
@@ -59,10 +61,10 @@ export function VendorsClient({
         ...prev,
         ...newEntries.map((e: ShortlistEntry) => ({ ...e, outreach_draft: null })),
       ]);
-      if (warning) alert(warning);
+      if (warning) setNotice(warning);
     } else {
       const { error } = await res.json();
-      alert(error);
+      setNotice(error);
     }
   }
 
@@ -110,6 +112,11 @@ export function VendorsClient({
           onChange={(e) => setLocation(e.target.value)}
           className="rounded-sm border border-ink/15 bg-white px-3 py-2.5 outline-none focus:border-champagne"
         />
+        {!location ? (
+          <span className="text-xs text-ink-soft">
+            Enter a location above to enable vendor search.
+          </span>
+        ) : null}
       </label>
 
       <div className="flex flex-wrap gap-2">
@@ -124,6 +131,19 @@ export function VendorsClient({
           </button>
         ))}
       </div>
+
+      {notice ? (
+        <div className="flex items-start justify-between gap-3 rounded-sm border border-champagne/40 bg-parchment/60 px-4 py-3 text-sm text-ink">
+          <p>{notice}</p>
+          <button
+            onClick={() => setNotice(null)}
+            aria-label="Dismiss"
+            className="text-ink-soft hover:text-ink"
+          >
+            ×
+          </button>
+        </div>
+      ) : null}
 
       {shortlist.length === 0 ? (
         <div className="flex flex-col items-center gap-2 rounded-sm border border-dashed border-ink/15 bg-parchment/60 px-6 py-14 text-center">
