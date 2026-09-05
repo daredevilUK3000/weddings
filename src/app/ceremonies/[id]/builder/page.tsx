@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { seedTimeline, reorderMoment, selectVowDraft } from "./actions";
 import { AppHeader } from "@/components/app-header";
 import { CeremonyNav } from "@/components/ceremony-nav";
+import { PrintButton } from "@/components/print-button";
 
 export default async function BuilderPage({
   params,
@@ -52,8 +53,11 @@ export default async function BuilderPage({
 
         {ceremony.ceremony_script ? (
           <section className="flex flex-col gap-3">
-            <h2 className="text-lg font-medium">Your ceremony script</h2>
-            <pre className="whitespace-pre-wrap rounded-sm border border-ink/10 bg-white/60 p-5 font-serif text-[15px] leading-relaxed">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-lg font-medium">Your ceremony script</h2>
+              <PrintButton />
+            </div>
+            <pre className="whitespace-pre-wrap rounded-sm border border-ink/10 bg-white/60 p-5 font-serif text-[15px] leading-relaxed print:border-none print:bg-transparent print:p-0">
               {ceremony.ceremony_script}
             </pre>
           </section>
@@ -117,7 +121,7 @@ export default async function BuilderPage({
                     </span>
                     <span className="font-serif text-lg">{moment.moment_name}</span>
                   </div>
-                  <div className="flex gap-3 text-ink-soft">
+                  <div className="flex gap-3 text-ink-soft print:hidden">
                     <form action={reorderMoment.bind(null, id, moment.id, "up")}>
                       <button
                         type="submit"

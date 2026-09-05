@@ -10,7 +10,7 @@ export function AppHeader({
   right?: ReactNode;
 }) {
   return (
-    <header className="border-b border-ink/10">
+    <header className="border-b border-ink/10 print:hidden">
       <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-5">
         <Link href={homeHref} className="flex items-center gap-3.5 text-ink">
           <SealIcon className="h-[72px] w-[72px]" />

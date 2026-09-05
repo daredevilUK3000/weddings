@@ -16,7 +16,7 @@ export function CeremonyNav({ ceremonyId }: { ceremonyId: string }) {
   const pathname = usePathname();
 
   return (
-    <nav className="flex flex-wrap gap-1 border-b border-ink/10">
+    <nav className="flex flex-wrap gap-1 border-b border-ink/10 print:hidden">
       {TABS.map((tab) => {
         const href = `/ceremonies/${ceremonyId}/${tab.slug}`;
         const active = pathname?.startsWith(href);
