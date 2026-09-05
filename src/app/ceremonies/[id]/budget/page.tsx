@@ -49,7 +49,23 @@ export default async function BudgetPage({
       <CeremonyNav ceremonyId={id} />
 
       <main className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-6 py-12">
-        <h1 className="font-serif text-3xl font-medium">Budget tracker</h1>
+        <div>
+          <p className="text-sm font-medium text-wine">Every dollar, still yours</p>
+          <h1 className="font-serif text-3xl font-medium">Budget tracker</h1>
+          <p className="mt-2 max-w-xl text-sm text-ink-soft">
+            There&apos;s no splitting costs, no in-laws to please, and no one else&apos;s
+            priorities to weigh against your own — just a clear picture of what this day
+            costs and where you want to spend it. Use this to keep venue, catering,
+            photography, and everything else from vendors honest against what you actually
+            want to pay.
+          </p>
+          <p className="mt-3 max-w-xl text-xs text-ink-soft">
+            For each category, enter what you expect to pay under{" "}
+            <span className="font-medium">Estimated</span>, then fill in{" "}
+            <span className="font-medium">Actual</span> once a vendor is booked and paid —
+            hit Save and the totals below update automatically.
+          </p>
+        </div>
 
         <div className="overflow-hidden rounded-sm border border-ink/10 bg-white/60">
           <table className="w-full text-sm">
