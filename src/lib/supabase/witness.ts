@@ -1,6 +1,7 @@
 import { createServiceClient } from "@/lib/supabase/service";
 import type {
   CeremonyStatus,
+  SignatureType,
   Vibe,
   WitnessAttendanceType,
   WitnessRsvpStatus,
@@ -23,6 +24,8 @@ export interface WitnessPortalData {
     canSignCertificate: boolean;
     rsvpStatus: WitnessRsvpStatus | null;
     checkedInAt: string | null;
+    contribution: { body: string; includeInCeremony: boolean } | null;
+    signature: { signatureType: SignatureType; signedAt: string } | null;
   };
   ceremony: {
     status: CeremonyStatus;
@@ -34,6 +37,7 @@ export interface WitnessPortalData {
     vows: string | null;
     ceremonyStory: string | null;
     programme: { momentName: string; time: string | null }[] | null;
+    shareCertificate: boolean;
   };
 }
 
@@ -53,7 +57,7 @@ export async function getWitnessByToken(token: string): Promise<WitnessPortalDat
   const { data: ceremony } = await supabase
     .from("ceremonies")
     .select(
-      "status, vibe, date, start_time, location, livestream_url, vows, reason, share_vows, share_ceremony_story, share_programme, share_livestream",
+      "status, vibe, date, start_time, location, livestream_url, vows, reason, share_vows, share_ceremony_story, share_programme, share_certificate, share_livestream",
     )
     .eq("id", witness.ceremony_id)
     .single();
@@ -70,6 +74,18 @@ export async function getWitnessByToken(token: string): Promise<WitnessPortalDat
     programme = (timeline ?? []).map((m) => ({ momentName: m.moment_name, time: m.time }));
   }
 
+  const { data: contribution } = await supabase
+    .from("witness_contributions")
+    .select("body, include_in_ceremony")
+    .eq("witness_id", witness.id)
+    .single();
+
+  const { data: signature } = await supabase
+    .from("witness_signatures")
+    .select("signature_type, signed_at")
+    .eq("witness_id", witness.id)
+    .single();
+
   return {
     witness: {
       id: witness.id,
@@ -80,6 +96,12 @@ export async function getWitnessByToken(token: string): Promise<WitnessPortalDat
       canSignCertificate: witness.can_sign_certificate,
       rsvpStatus: witness.rsvp_status,
       checkedInAt: witness.checked_in_at,
+      contribution: contribution
+        ? { body: contribution.body, includeInCeremony: contribution.include_in_ceremony }
+        : null,
+      signature: signature
+        ? { signatureType: signature.signature_type, signedAt: signature.signed_at }
+        : null,
     },
     ceremony: {
       status: ceremony.status,
@@ -91,6 +113,7 @@ export async function getWitnessByToken(token: string): Promise<WitnessPortalDat
       vows: ceremony.share_vows ? ceremony.vows : null,
       ceremonyStory: ceremony.share_ceremony_story ? ceremony.reason : null,
       programme,
+      shareCertificate: ceremony.share_certificate,
     },
   };
 }

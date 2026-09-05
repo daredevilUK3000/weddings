@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SignOutButton } from "@/components/sign-out-button";
 import { AppHeader } from "@/components/app-header";
+import type { CeremonyStatus } from "@/lib/types/database";
 
 const VIBE_LABEL: Record<string, string> = {
   spiritual: "Spiritual",
@@ -27,6 +28,7 @@ interface Ceremony {
   location: string | null;
   ceremony_script: string | null;
   vows: string | null;
+  status: CeremonyStatus;
 }
 
 function Stage({ label, done }: { label: string; done: boolean }) {
@@ -38,6 +40,23 @@ function Stage({ label, done }: { label: string; done: boolean }) {
       </span>
     </div>
   );
+}
+
+// Brief §4.1: "Prepare My Wedding Day" before the essentials are done,
+// "Start My Wedding Day" once ready and the ceremony date has arrived.
+function directorLabel(status: CeremonyStatus, isCeremonyDay: boolean): string {
+  switch (status) {
+    case "wedding_day":
+      return "Continue Your Wedding Day";
+    case "ceremony_active":
+      return "Continue Your Ceremony";
+    case "completed":
+      return "View Wedding Day";
+    case "ready":
+      return isCeremonyDay ? "Start My Wedding Day" : "Wedding Director";
+    default:
+      return "Prepare My Wedding Day";
+  }
 }
 
 function CeremonyCard({ c }: { c: Ceremony }) {
@@ -53,37 +72,44 @@ function CeremonyCard({ c }: { c: Ceremony }) {
   const primaryHref = c.ceremony_script
     ? `/ceremonies/${c.id}/builder`
     : `/ceremonies/${c.id}/officiant`;
+  const isCeremonyDay = c.date === new Date().toISOString().slice(0, 10);
 
   return (
-    <Link
-      href={primaryHref}
-      className="flex flex-col gap-4 rounded-sm border border-ink/10 bg-white/40 px-6 py-6 transition-all hover:-translate-y-0.5 hover:border-champagne/50 hover:bg-white"
-    >
-      <div>
-        <p className="text-xs font-medium uppercase tracking-[0.15em] text-champagne">
-          Your ceremony
-        </p>
-        <h2 className="mt-1 font-serif text-2xl font-medium">
-          {VIBE_LABEL[c.vibe] ?? c.vibe} ceremony
-        </h2>
-        <p className="mt-1 text-sm text-ink-soft">
-          {[c.date, c.location].filter(Boolean).join(" · ") || "Details still open"}
-        </p>
-        <p className="mt-2 font-serif text-base italic text-ink-soft">
-          {VIBE_TAGLINE[c.vibe] ?? "The day you're choosing yourself."}
-        </p>
-      </div>
+    <div className="flex flex-col gap-4 rounded-sm border border-ink/10 bg-white/40 px-6 py-6 transition-all hover:border-champagne/50 hover:bg-white">
+      <Link href={primaryHref} className="flex flex-col gap-4">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-[0.15em] text-champagne">
+            Your ceremony
+          </p>
+          <h2 className="mt-1 font-serif text-2xl font-medium">
+            {VIBE_LABEL[c.vibe] ?? c.vibe} ceremony
+          </h2>
+          <p className="mt-1 text-sm text-ink-soft">
+            {[c.date, c.location].filter(Boolean).join(" · ") || "Details still open"}
+          </p>
+          <p className="mt-2 font-serif text-base italic text-ink-soft">
+            {VIBE_TAGLINE[c.vibe] ?? "The day you're choosing yourself."}
+          </p>
+        </div>
 
-      <div>
-        {stages.map((s) => (
-          <Stage key={s.label} label={s.label} done={s.done} />
-        ))}
-      </div>
+        <div>
+          {stages.map((s) => (
+            <Stage key={s.label} label={s.label} done={s.done} />
+          ))}
+        </div>
 
-      <p className="text-xs font-medium uppercase tracking-wide text-ink-soft">
-        {doneCount} of {stages.length} stages complete
-      </p>
-    </Link>
+        <p className="text-xs font-medium uppercase tracking-wide text-ink-soft">
+          {doneCount} of {stages.length} stages complete
+        </p>
+      </Link>
+
+      <Link
+        href={`/ceremonies/${c.id}/director`}
+        className="w-fit rounded-sm border border-champagne/60 bg-parchment/40 px-4 py-2.5 text-sm font-medium text-ink transition-colors hover:border-champagne hover:bg-parchment"
+      >
+        {directorLabel(c.status, isCeremonyDay)}
+      </Link>
+    </div>
   );
 }
 
@@ -99,7 +125,7 @@ export default async function DashboardPage() {
 
   const { data: ceremonies } = await supabase
     .from("ceremonies")
-    .select("id, vibe, date, location, ceremony_script, vows")
+    .select("id, vibe, date, location, ceremony_script, vows, status")
     .order("created_at", { ascending: false });
 
   return (

@@ -14,7 +14,9 @@ import {
   renderToStream,
 } from "@react-pdf/renderer";
 import { createClient } from "@/lib/supabase/server";
-import type { Vibe } from "@/lib/types/database";
+import { createServiceClient } from "@/lib/supabase/service";
+import { getWitnessByToken } from "@/lib/supabase/witness";
+import type { SignatureType, Vibe } from "@/lib/types/database";
 import { LEAF_PATH, SPRIG_STEMS, SPRIG_LEAVES, SPRIG_DOTS } from "@/lib/cert-sprig";
 import { formatCeremonyDate } from "@/lib/format-ceremony-date";
 
@@ -154,11 +156,49 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   sigLabel: { fontSize: 9.5, letterSpacing: 2, color: INK_SOFT },
+  witnessedByWrap: {
+    width: "100%",
+    marginTop: 8,
+    alignItems: "center",
+  },
+  witnessedByLabel: {
+    fontSize: 9,
+    letterSpacing: 2.5,
+    color: INK_SOFT,
+    marginBottom: 5,
+  },
+  witnessList: {
+    alignItems: "center",
+  },
+  witnessRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 3,
+  },
+  witnessSigScript: {
+    fontFamily: "Mrs Saint Delafield",
+    fontSize: 16,
+    color: INK_SOFT,
+  },
+  witnessNameLabel: {
+    fontSize: 8,
+    letterSpacing: 1,
+    color: INK_SOFT,
+    marginLeft: 6,
+  },
+  ceremonialNote: {
+    fontSize: 7,
+    letterSpacing: 0.6,
+    color: INK_SOFT,
+    textAlign: "center",
+    marginTop: 6,
+    width: "90%",
+  },
   footerTagline: {
     fontSize: 11,
     letterSpacing: 2.5,
     color: INK_SOFT,
-    marginTop: 10,
+    marginTop: 8,
     textAlign: "center",
     width: "84%",
   },
@@ -219,17 +259,51 @@ function Rule() {
   );
 }
 
+interface SignedWitness {
+  id: string;
+  name: string;
+  signatureType: SignatureType;
+  signatureData: string;
+}
+
+function parseDrawnSignature(data: string): { viewBox: string; paths: string[] } | null {
+  try {
+    return JSON.parse(data) as { viewBox: string; paths: string[] };
+  } catch {
+    return null;
+  }
+}
+
+function DrawnSignature({ data }: { data: string }) {
+  const parsed = parseDrawnSignature(data);
+  if (!parsed) return null;
+
+  return (
+    <Svg width={70} height={20} viewBox={parsed.viewBox}>
+      {parsed.paths.map((d, i) => (
+        <Path key={i} d={d} stroke={INK} strokeWidth={1.6} fill="none" />
+      ))}
+    </Svg>
+  );
+}
+
 interface CertificateProps {
   name: string;
   date: string | null;
   vowSummary: string;
   vibe: Vibe;
+  signedWitnesses: SignedWitness[];
 }
 
-function Certificate({ name, date, vowSummary }: CertificateProps) {
+function Certificate({ name, date, vowSummary, signedWitnesses }: CertificateProps) {
   // The certificate holds one short, quotable line — not a full vow paragraph.
   const displaySummary =
     vowSummary.length > 160 ? `${vowSummary.slice(0, 157).trimEnd()}…` : vowSummary;
+  // The 62pt script name falls back to a full email when no profile name is
+  // set — unbounded, that can wrap onto multiple lines and, combined with
+  // any later overflow (e.g. witness signatures), trips a react-pdf
+  // pagination bug that renders a corrupted extra page. Cap it defensively.
+  const displayName = name.length > 24 ? `${name.slice(0, 21).trimEnd()}…` : name;
   const displayDate = date ? formatCeremonyDate(date) : null;
 
   return (
@@ -251,7 +325,7 @@ function Certificate({ name, date, vowSummary }: CertificateProps) {
             <Rule />
 
             <Text style={styles.certifiesThat}>THIS CERTIFIES THAT</Text>
-            <Text style={styles.name}>{name}</Text>
+            <Text style={styles.name}>{displayName}</Text>
 
             <Rule />
 
@@ -285,6 +359,30 @@ function Certificate({ name, date, vowSummary }: CertificateProps) {
               </View>
             </View>
 
+            {signedWitnesses.length > 0 ? (
+              <View style={styles.witnessedByWrap}>
+                <Text style={styles.witnessedByLabel}>WITNESSED BY</Text>
+                <View style={styles.witnessList}>
+                  {signedWitnesses.map((w) => (
+                    <View key={w.id} style={styles.witnessRow}>
+                      {w.signatureType === "drawn" ? (
+                        <>
+                          <DrawnSignature data={w.signatureData} />
+                          <Text style={styles.witnessNameLabel}>{w.name.toUpperCase()}</Text>
+                        </>
+                      ) : (
+                        <Text style={styles.witnessSigScript}>{w.signatureData}</Text>
+                      )}
+                    </View>
+                  ))}
+                </View>
+                <Text style={styles.ceremonialNote}>
+                  WITNESS SIGNATURES REPRESENT CEREMONIAL ACKNOWLEDGEMENT AND ARE NOT LEGAL
+                  ATTESTATION.
+                </Text>
+              </View>
+            ) : null}
+
             <Text style={styles.footerTagline}>
               THIS IS YOUR DAY.   THIS IS YOUR VOW.   THIS IS YOUR LIFE.
             </Text>
@@ -298,34 +396,77 @@ function Certificate({ name, date, vowSummary }: CertificateProps) {
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const ceremonyId = searchParams.get("ceremonyId");
+  const witnessToken = searchParams.get("witnessToken");
   if (!ceremonyId) {
     return Response.json({ error: "ceremonyId is required" }, { status: 400 });
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  let ceremony: { vibe: Vibe; date: string | null; vows: string | null; user_id: string } | null =
+    null;
+
+  if (witnessToken) {
+    const portal = await getWitnessByToken(witnessToken);
+    if (!portal || portal.witness.ceremonyId !== ceremonyId || !portal.ceremony.shareCertificate) {
+      return Response.json({ error: "Not found" }, { status: 404 });
+    }
+    const service = createServiceClient();
+    const { data } = await service
+      .from("ceremonies")
+      .select("vibe, date, vows, user_id")
+      .eq("id", ceremonyId)
+      .single();
+    if (!data) {
+      return Response.json({ error: "Ceremony not found" }, { status: 404 });
+    }
+    ceremony = data;
+  } else {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { data } = await supabase
+      .from("ceremonies")
+      .select("vibe, date, vows, user_id")
+      .eq("id", ceremonyId)
+      .eq("user_id", user.id)
+      .single();
+    if (!data) {
+      return Response.json({ error: "Ceremony not found" }, { status: 404 });
+    }
+    ceremony = data;
   }
 
-  const { data: ceremony } = await supabase
-    .from("ceremonies")
-    .select("vibe, date, vows, user_id")
-    .eq("id", ceremonyId)
-    .eq("user_id", user.id)
-    .single();
-
-  if (!ceremony) {
-    return Response.json({ error: "Ceremony not found" }, { status: 404 });
-  }
-
-  const { data: profile } = await supabase
+  const service = createServiceClient();
+  const { data: profile } = await service
     .from("profiles")
     .select("name, email")
-    .eq("id", user.id)
+    .eq("id", ceremony.user_id)
     .single();
+
+  const { data: witnessRows } = await service
+    .from("witnesses")
+    .select("id, name")
+    .eq("ceremony_id", ceremonyId);
+  const witnessIds = (witnessRows ?? []).map((w) => w.id);
+
+  const { data: signatureRows } = witnessIds.length
+    ? await service
+        .from("witness_signatures")
+        .select("witness_id, signature_type, signature_data")
+        .in("witness_id", witnessIds)
+    : { data: [] as { witness_id: string; signature_type: SignatureType; signature_data: string }[] };
+
+  const nameById = new Map((witnessRows ?? []).map((w) => [w.id, w.name]));
+  const signedWitnesses: SignedWitness[] = (signatureRows ?? []).map((s) => ({
+    id: s.witness_id,
+    name: nameById.get(s.witness_id) ?? "Witness",
+    signatureType: s.signature_type,
+    signatureData: s.signature_data,
+  }));
 
   const vowSummary = ceremony.vows
     ? ceremony.vows.split("\n\n---\n\n")[0]
@@ -337,6 +478,7 @@ export async function GET(req: Request) {
       date={ceremony.date}
       vowSummary={vowSummary}
       vibe={ceremony.vibe}
+      signedWitnesses={signedWitnesses}
     />,
   );
 

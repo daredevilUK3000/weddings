@@ -38,7 +38,15 @@ describe("updateSession (auth proxy)", () => {
     expect(res.headers.get("location")).toBeNull();
   });
 
-  it.each(["/login", "/sign-up", "/auth/callback", "/onboarding"])(
+  it.each([
+    "/login",
+    "/sign-up",
+    "/auth/callback",
+    "/onboarding",
+    "/witness/tok_abc",
+    "/api/witness/tok_abc/rsvp",
+    "/api/certificate/pdf",
+  ])(
     "allows an unauthenticated user to reach the public path %s",
     async (path) => {
       getUser.mockResolvedValue({ data: { user: null } });

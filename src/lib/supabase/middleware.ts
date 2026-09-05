@@ -1,7 +1,20 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/login", "/sign-up", "/auth/callback", "/onboarding", "/faq", "/witness"];
+// /api/witness and /api/certificate/pdf are reachable by an unauthenticated
+// witness (via their invite token, resolved inside each route handler) as
+// well as by the signed-in owner — each route enforces its own
+// authorization, so the middleware only needs to not redirect them away.
+const PUBLIC_PATHS = [
+  "/login",
+  "/sign-up",
+  "/auth/callback",
+  "/onboarding",
+  "/faq",
+  "/witness",
+  "/api/witness",
+  "/api/certificate/pdf",
+];
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
