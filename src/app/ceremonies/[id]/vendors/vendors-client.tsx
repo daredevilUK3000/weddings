@@ -64,9 +64,14 @@ export function VendorsClient({
       if (warning) {
         setNotice(warning);
       } else if (newEntries.length === 0) {
-        const categoryName = categories.find((c) => c.slug === categorySlug)?.name ?? "that category";
+        const category = categories.find((c) => c.slug === categorySlug);
+        const categoryName = category?.name ?? "that category";
+        const hasExisting = shortlist.some((v) => v.category_id === category?.id);
         setNotice(
-          `No new ${categoryName.toLowerCase()} vendors found near this location — you may have already added everyone we found.`,
+          `No new ${categoryName.toLowerCase()} vendors found near this location — try a different location for more options.` +
+            (hasExisting
+              ? " The ones we already found are further down the page — scroll down to see them."
+              : ""),
         );
       }
     } else {
