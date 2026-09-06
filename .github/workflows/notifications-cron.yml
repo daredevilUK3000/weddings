@@ -1,0 +1,29 @@
+name: Notification cron sweep
+
+# External trigger for /api/cron/notifications, standing in for a Vercel
+# cron entry — Hobby-tier Vercel cron only guarantees daily execution,
+# which can't catch the 30-minute-before-ceremony window. The endpoint
+# itself is a dumb, over-inclusive sweep: send.ts's notification budget
+# ledger makes repeat calls within the same window harmless no-ops, so a
+# missed or doubled-up run here is not a correctness risk.
+#
+# Requires two repo settings (Settings -> Secrets and variables -> Actions):
+#   - Secret "CRON_SECRET": must match the CRON_SECRET env var set on the
+#     Vercel project (same value as .env.local's CRON_SECRET for local dev).
+#   - Variable "APP_BASE_URL": the deployed site's base URL, e.g.
+#     https://weddingsforone.vercel.app (no trailing slash).
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger notification sweep
+        run: |
+          curl --fail --silent --show-error \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ vars.APP_BASE_URL }}/api/cron/notifications"

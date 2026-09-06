@@ -46,6 +46,7 @@ describe("updateSession (auth proxy)", () => {
     "/witness/tok_abc",
     "/api/witness/tok_abc/rsvp",
     "/api/certificate/pdf",
+    "/api/cron/notifications",
   ])(
     "allows an unauthenticated user to reach the public path %s",
     async (path) => {

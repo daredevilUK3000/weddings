@@ -5,6 +5,9 @@ import { NextResponse, type NextRequest } from "next/server";
 // witness (via their invite token, resolved inside each route handler) as
 // well as by the signed-in owner — each route enforces its own
 // authorization, so the middleware only needs to not redirect them away.
+// /api/cron/notifications is the same shape of exception: it's called by
+// an external scheduler (GitHub Actions) with no Supabase session at all,
+// and enforces its own CRON_SECRET bearer-token check.
 const PUBLIC_PATHS = [
   "/login",
   "/sign-up",
@@ -14,6 +17,7 @@ const PUBLIC_PATHS = [
   "/witness",
   "/api/witness",
   "/api/certificate/pdf",
+  "/api/cron",
 ];
 
 export async function updateSession(request: NextRequest) {
