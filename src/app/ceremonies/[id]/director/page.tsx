@@ -5,7 +5,8 @@ import { AppHeader } from "@/components/app-header";
 import { CeremonyNav } from "@/components/ceremony-nav";
 import { ensureStatusProgression } from "@/lib/ceremony-status";
 import { computeReadiness } from "@/lib/director/readiness";
-import { DirectorActionButton } from "./director-client";
+import { computeNowNextLater } from "@/lib/director/timeline";
+import { DirectorActionButton, LiveWeddingDayView } from "./director-client";
 import { VendorBookingStatusEditor } from "@/components/vendor-booking-status-editor";
 
 export default async function DirectorPage({
@@ -65,14 +66,21 @@ export default async function DirectorPage({
         .eq("include_in_ceremony", true)
     : { data: [] as { id: string }[] };
 
-  const { data: contributionMoments } = await supabase
+  const { data: timeline } = await supabase
     .from("ceremony_timeline")
-    .select("id")
-    .eq("ceremony_id", id)
-    .eq("moment_kind", "witness_contribution");
+    .select("id, moment_name, order_index, event_status, time, moment_kind")
+    .eq("ceremony_id", id);
 
+  const hasContributionMoment = (timeline ?? []).some(
+    (m) => m.moment_kind === "witness_contribution",
+  );
   const showOrphanedContributionNudge =
-    (includedContributions?.length ?? 0) > 0 && (contributionMoments?.length ?? 0) === 0;
+    (includedContributions?.length ?? 0) > 0 && !hasContributionMoment;
+
+  const nowNextLater = computeNowNextLater(
+    timeline ?? [],
+    (vendors ?? []).map((v) => ({ id: v.id, name: v.name, booking_status: v.booking_status })),
+  );
 
   const isCeremonyDay = ceremony.date === new Date().toISOString().slice(0, 10);
 
@@ -91,58 +99,72 @@ export default async function DirectorPage({
           </p>
         </div>
 
-        <section className="flex flex-col gap-3">
-          <div className="flex items-baseline justify-between">
-            <h2 className="text-lg font-medium">Readiness</h2>
-            <span className="font-serif text-2xl text-champagne">{readiness.score}%</span>
-          </div>
-          <div className="rounded-sm border border-ink/10 bg-white/60 px-2 py-2">
-            <ul>
-              {readiness.items.map((item) => (
-                <li
-                  key={item.key}
-                  className="flex items-center justify-between gap-4 border-t border-ink/8 px-4 py-3 first:border-t-0"
-                >
-                  <span className="text-sm">{item.label}</span>
-                  <span
-                    className={
-                      item.done ? "text-wine" : item.essential ? "text-wine/60" : "text-ink-soft"
-                    }
-                  >
-                    {item.done ? "✓" : item.essential ? "⚠" : "—"}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
+        {ceremony.status === "wedding_day" ? (
+          <LiveWeddingDayView
+            ceremonyDate={ceremony.date}
+            startTime={ceremony.start_time}
+            nowNextLater={nowNextLater}
+          />
+        ) : (
+          <>
+            <section className="flex flex-col gap-3">
+              <div className="flex items-baseline justify-between">
+                <h2 className="text-lg font-medium">Readiness</h2>
+                <span className="font-serif text-2xl text-champagne">{readiness.score}%</span>
+              </div>
+              <div className="rounded-sm border border-ink/10 bg-white/60 px-2 py-2">
+                <ul>
+                  {readiness.items.map((item) => (
+                    <li
+                      key={item.key}
+                      className="flex items-center justify-between gap-4 border-t border-ink/8 px-4 py-3 first:border-t-0"
+                    >
+                      <span className="text-sm">{item.label}</span>
+                      <span
+                        className={
+                          item.done
+                            ? "text-wine"
+                            : item.essential
+                              ? "text-wine/60"
+                              : "text-ink-soft"
+                        }
+                      >
+                        {item.done ? "✓" : item.essential ? "⚠" : "—"}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </section>
 
-        {vendors && vendors.length > 0 ? (
-          <section className="flex flex-col gap-3">
-            <h2 className="text-lg font-medium">Vendors</h2>
-            <ul className="flex flex-col gap-3">
-              {vendors.map((v) => (
-                <li key={v.id} className="flex flex-col gap-2">
-                  <p className="font-serif text-base">{v.name}</p>
-                  <VendorBookingStatusEditor
-                    vendor={{
-                      id: v.id,
-                      bookingStatus: v.booking_status,
-                      contactPerson: v.contact_person,
-                      contactPhone: v.contact_phone,
-                      bookingReference: v.booking_reference,
-                      arrivalTime: v.arrival_time,
-                      serviceStartTime: v.service_start_time,
-                      serviceEndTime: v.service_end_time,
-                      amountOutstanding: v.amount_outstanding,
-                      vendorNotes: v.vendor_notes,
-                    }}
-                  />
-                </li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
+            {vendors && vendors.length > 0 ? (
+              <section className="flex flex-col gap-3">
+                <h2 className="text-lg font-medium">Vendors</h2>
+                <ul className="flex flex-col gap-3">
+                  {vendors.map((v) => (
+                    <li key={v.id} className="flex flex-col gap-2">
+                      <p className="font-serif text-base">{v.name}</p>
+                      <VendorBookingStatusEditor
+                        vendor={{
+                          id: v.id,
+                          bookingStatus: v.booking_status,
+                          contactPerson: v.contact_person,
+                          contactPhone: v.contact_phone,
+                          bookingReference: v.booking_reference,
+                          arrivalTime: v.arrival_time,
+                          serviceStartTime: v.service_start_time,
+                          serviceEndTime: v.service_end_time,
+                          amountOutstanding: v.amount_outstanding,
+                          vendorNotes: v.vendor_notes,
+                        }}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+          </>
+        )}
 
         <section className="flex flex-col gap-2 rounded-sm border border-champagne/40 bg-parchment/60 px-5 py-4">
           <h2 className="text-sm font-medium">Your Witness Circle</h2>
