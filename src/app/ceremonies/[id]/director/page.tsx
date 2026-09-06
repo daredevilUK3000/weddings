@@ -6,8 +6,10 @@ import { CeremonyNav } from "@/components/ceremony-nav";
 import { ensureStatusProgression } from "@/lib/ceremony-status";
 import { computeReadiness } from "@/lib/director/readiness";
 import { computeNowNextLater } from "@/lib/director/timeline";
-import { DirectorActionButton, LiveWeddingDayView } from "./director-client";
+import { getDirectorMessage } from "@/lib/director/messages";
+import { DirectorActionButton, LiveWeddingDayView, CeremonyModeView } from "./director-client";
 import { VendorBookingStatusEditor } from "@/components/vendor-booking-status-editor";
+import { ClaraMessage } from "@/components/clara-message";
 
 export default async function DirectorPage({
   params,
@@ -52,30 +54,37 @@ export default async function DirectorPage({
 
   const { data: witnesses } = await supabase
     .from("witnesses")
-    .select("id, rsvp_status")
+    .select("id, name, rsvp_status")
     .eq("ceremony_id", id);
   const witnessCount = witnesses?.length ?? 0;
   const respondedCount = (witnesses ?? []).filter((w) => w.rsvp_status).length;
   const witnessIds = (witnesses ?? []).map((w) => w.id);
+  const witnessNameById = new Map((witnesses ?? []).map((w) => [w.id, w.name]));
 
   const { data: includedContributions } = witnessIds.length
     ? await supabase
         .from("witness_contributions")
-        .select("id")
+        .select("witness_id, body")
         .in("witness_id", witnessIds)
         .eq("include_in_ceremony", true)
-    : { data: [] as { id: string }[] };
+    : { data: [] as { witness_id: string; body: string }[] };
+
+  const includedMessages = (includedContributions ?? []).map((c) => ({
+    witnessName: witnessNameById.get(c.witness_id) ?? "A witness",
+    body: c.body,
+  }));
 
   const { data: timeline } = await supabase
     .from("ceremony_timeline")
     .select("id, moment_name, order_index, event_status, time, moment_kind")
-    .eq("ceremony_id", id);
+    .eq("ceremony_id", id)
+    .order("order_index");
 
   const hasContributionMoment = (timeline ?? []).some(
     (m) => m.moment_kind === "witness_contribution",
   );
   const showOrphanedContributionNudge =
-    (includedContributions?.length ?? 0) > 0 && !hasContributionMoment;
+    includedMessages.length > 0 && !hasContributionMoment;
 
   const nowNextLater = computeNowNextLater(
     timeline ?? [],
@@ -83,6 +92,25 @@ export default async function DirectorPage({
   );
 
   const isCeremonyDay = ceremony.date === new Date().toISOString().slice(0, 10);
+
+  if (ceremony.status === "ceremony_active") {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <AppHeader />
+        <CeremonyNav ceremonyId={id} />
+        <CeremonyModeView
+          ceremonyId={id}
+          moments={(timeline ?? []).map((m) => ({
+            id: m.id,
+            momentName: m.moment_name,
+            eventStatus: m.event_status,
+            momentKind: m.moment_kind,
+          }))}
+          includedMessages={includedMessages}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -204,14 +232,11 @@ export default async function DirectorPage({
             />
           ) : ceremony.status === "wedding_day" ? (
             <DirectorActionButton ceremonyId={id} action="begin_ceremony" label="Begin Ceremony" />
-          ) : ceremony.status === "ceremony_active" ? (
-            <DirectorActionButton
-              ceremonyId={id}
-              action="finish_ceremony"
-              label="Finish Ceremony"
-            />
           ) : ceremony.status === "completed" ? (
-            <p className="text-sm text-champagne">Your ceremony is complete.</p>
+            <ClaraMessage
+              label="Wedding Director"
+              message={getDirectorMessage("ceremony_completed")}
+            />
           ) : (
             <p className="text-sm text-ink-soft">
               Keep preparing — once the essentials above are complete, Wedding Director will be

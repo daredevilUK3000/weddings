@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { OFFICIANT_STAGES } from "@/lib/officiant-questions";
+import { ClaraMessage } from "@/components/clara-message";
 
 type Phase = "question" | "acknowledging" | "complete";
 
@@ -160,18 +161,16 @@ export function OfficiantExperience({ ceremonyId }: { ceremonyId: string }) {
       ) : null}
 
       {phase === "acknowledging" ? (
-        <div className="animate-[fadeIn_0.5s_ease] flex max-w-xl flex-col gap-3">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-soft">
-            Clara
-          </p>
-          {submittingAck ? (
-            <span className="h-2 w-2 animate-pulse rounded-full bg-champagne" aria-hidden="true" />
-          ) : (
-            <p className="animate-[fadeIn_0.5s_ease] font-serif text-xl italic leading-relaxed text-ink">
-              {acknowledgment}
+        submittingAck ? (
+          <div className="flex max-w-xl flex-col gap-3">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-soft">
+              Clara
             </p>
-          )}
-        </div>
+            <span className="h-2 w-2 animate-pulse rounded-full bg-champagne" aria-hidden="true" />
+          </div>
+        ) : (
+          <ClaraMessage label="Clara" message={acknowledgment ?? ""} />
+        )
       ) : null}
 
       {phase === "complete" ? (
