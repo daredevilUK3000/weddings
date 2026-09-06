@@ -117,6 +117,9 @@ export async function POST(req: Request) {
       .eq("user_id", user.id);
   }
 
+  // Vendors already shortlisted for this category are excluded from browse
+  // results — browsing is read-only and must not re-suggest what's already
+  // been explicitly added.
   const { data: existing } = await supabase
     .from("vendor_shortlist")
     .select("place_id")
@@ -127,7 +130,10 @@ export async function POST(req: Request) {
   const priorityRanking = (ceremony.priority_ranking as string[]) ?? [];
   const newPlaces = places.filter((p) => !existingPlaceIds.has(p.placeId)).slice(0, 5);
 
-  const shortlist = await Promise.all(
+  // Browsing never writes to vendor_shortlist — it only returns candidates.
+  // A candidate is persisted only when the user explicitly shortlists it via
+  // POST /api/vendors/shortlist.
+  const candidates = await Promise.all(
     newPlaces.map(async (place) => {
       const rationale = await generateVendorRationale(
         { name: place.name, category: category.name, address: place.address },
@@ -138,23 +144,16 @@ export async function POST(req: Request) {
         },
       );
 
-      const { data, error } = await supabase
-        .from("vendor_shortlist")
-        .insert({
-          ceremony_id: ceremonyId,
-          category_id: category.id,
-          place_id: place.placeId,
-          name: place.name,
-          address: place.address,
-          ai_rationale: rationale,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
+      return {
+        placeId: place.placeId,
+        categoryId: category.id,
+        categorySlug: category.slug,
+        name: place.name,
+        address: place.address,
+        rationale,
+      };
     }),
   );
 
-  return Response.json({ shortlist });
+  return Response.json({ candidates });
 }

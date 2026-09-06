@@ -36,6 +36,15 @@ interface ShortlistEntry {
   vendor_notes: string | null;
 }
 
+interface Candidate {
+  placeId: string;
+  categoryId: string;
+  categorySlug: string;
+  name: string;
+  address: string | null;
+  rationale: string | null;
+}
+
 function toBookingData(v: ShortlistEntry): VendorBookingData {
   return {
     id: v.id,
@@ -67,6 +76,8 @@ export function VendorsClient({
   const [location, setLocation] = useState(defaultLocation);
   const [searching, setSearching] = useState<string | null>(null);
   const [shortlist, setShortlist] = useState<ShortlistEntry[]>(initialShortlist);
+  const [browseResults, setBrowseResults] = useState<Record<string, Candidate[]>>({});
+  const [shortlisting, setShortlisting] = useState<string | null>(null);
   const [drafting, setDrafting] = useState<string | null>(null);
   const [asks, setAsks] = useState<Record<string, string>>({});
   const [notice, setNotice] = useState<string | null>(null);
@@ -82,14 +93,14 @@ export function VendorsClient({
     setSearching(null);
 
     if (res.ok) {
-      const { shortlist: newEntries, warning } = await res.json();
-      setShortlist((prev) => [
-        ...prev,
-        ...newEntries.map((e: ShortlistEntry) => ({ ...e, outreach_draft: null })),
-      ]);
+      const { candidates, warning } = await res.json();
+      // Each search replaces this category's browse results — browsing is
+      // read-only, so there's no accumulation to worry about, and a fresh
+      // search should show fresh results rather than piling on old ones.
+      setBrowseResults((prev) => ({ ...prev, [categorySlug]: candidates }));
       if (warning) {
         setNotice(warning);
-      } else if (newEntries.length === 0) {
+      } else if (candidates.length === 0) {
         const category = categories.find((c) => c.slug === categorySlug);
         const categoryName = category?.name ?? "that category";
         const hasExisting = shortlist.some((v) => v.category_id === category?.id);
@@ -100,6 +111,37 @@ export function VendorsClient({
               : ""),
         );
       }
+    } else {
+      const { error } = await res.json();
+      setNotice(error);
+    }
+  }
+
+  async function shortlistVendor(candidate: Candidate) {
+    setShortlisting(candidate.placeId);
+    const res = await fetch("/api/vendors/shortlist", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ceremonyId,
+        categoryId: candidate.categoryId,
+        placeId: candidate.placeId,
+        name: candidate.name,
+        address: candidate.address,
+        rationale: candidate.rationale,
+      }),
+    });
+    setShortlisting(null);
+
+    if (res.ok) {
+      const entry = await res.json();
+      setShortlist((prev) => [...prev, { ...entry, outreach_draft: null }]);
+      setBrowseResults((prev) => ({
+        ...prev,
+        [candidate.categorySlug]: (prev[candidate.categorySlug] ?? []).filter(
+          (c) => c.placeId !== candidate.placeId,
+        ),
+      }));
     } else {
       const { error } = await res.json();
       setNotice(error);
@@ -183,16 +225,68 @@ export function VendorsClient({
         </div>
       ) : null}
 
+      {Object.entries(browseResults).some(([, results]) => results.length > 0) ? (
+        <div className="flex flex-col gap-6">
+          {categories.map((c) => {
+            const results = browseResults[c.slug];
+            if (!results || results.length === 0) return null;
+            return (
+              <section key={c.id} className="flex flex-col gap-3">
+                <h2 className="text-sm font-medium uppercase tracking-wide text-ink-soft">
+                  {c.name} — search results
+                </h2>
+                <ul className="flex flex-col gap-3">
+                  {results.map((candidate) => (
+                    <li
+                      key={candidate.placeId}
+                      className="flex flex-col gap-3 rounded-sm border border-ink/10 bg-white/40 p-4"
+                    >
+                      <div>
+                        <h3 className="font-serif text-lg font-medium">{candidate.name}</h3>
+                        {candidate.address ? (
+                          <p className="text-sm text-ink-soft">{candidate.address}</p>
+                        ) : null}
+                      </div>
+                      {candidate.rationale ? (
+                        <p className="border-l-2 border-champagne/50 pl-3 font-serif text-[15px] italic leading-relaxed text-ink">
+                          {candidate.rationale}
+                        </p>
+                      ) : null}
+                      <button
+                        onClick={() => shortlistVendor(candidate)}
+                        disabled={shortlisting === candidate.placeId}
+                        className="w-fit rounded-sm bg-ink px-3 py-2 text-sm font-medium text-ivory transition-all hover:-translate-y-0.5 hover:bg-wine disabled:opacity-50"
+                      >
+                        {shortlisting === candidate.placeId
+                          ? "Shortlisting…"
+                          : "Shortlist this vendor"}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            );
+          })}
+        </div>
+      ) : null}
+
       {shortlist.length === 0 ? (
         <div className="flex flex-col items-center gap-2 rounded-sm border border-dashed border-ink/15 bg-parchment/60 px-6 py-14 text-center">
           <p className="font-serif text-lg">No vendors shortlisted yet.</p>
           <p className="max-w-sm text-sm text-ink-soft">
             Set a location and search a category above — we&apos;ll pull real venues,
-            photographers, and florists near you with a note on why each one fits.
+            photographers, and florists near you with a note on why each one fits. Search
+            results are shown separately above; click{" "}
+            <span className="font-medium text-ink">Shortlist this vendor</span> on any of them
+            to add it here.
           </p>
         </div>
       ) : (
-        <ul className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-ink-soft">
+            Your shortlist
+          </h2>
+          <ul className="flex flex-col gap-4">
           {shortlist.map((v) => (
             <li
               key={v.id}
@@ -271,7 +365,8 @@ export function VendorsClient({
               )}
             </li>
           ))}
-        </ul>
+          </ul>
+        </div>
       )}
     </div>
   );
