@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/app-header";
 import { CeremonyNav } from "@/components/ceremony-nav";
 import { ensureStatusProgression } from "@/lib/ceremony-status";
 import { computeReadiness } from "@/lib/director/readiness";
 import { DirectorActionButton } from "./director-client";
+import { VendorBookingStatusEditor } from "@/components/vendor-booking-status-editor";
 
 export default async function DirectorPage({
   params,
@@ -40,17 +42,37 @@ export default async function DirectorPage({
 
   const { data: vendors } = await supabase
     .from("vendor_shortlist")
-    .select("booking_status")
+    .select(
+      "id, name, booking_status, contact_person, contact_phone, booking_reference, arrival_time, service_start_time, service_end_time, amount_outstanding, vendor_notes",
+    )
     .eq("ceremony_id", id);
 
   const readiness = computeReadiness(ceremony, vendors ?? []);
 
   const { data: witnesses } = await supabase
     .from("witnesses")
-    .select("rsvp_status")
+    .select("id, rsvp_status")
     .eq("ceremony_id", id);
   const witnessCount = witnesses?.length ?? 0;
   const respondedCount = (witnesses ?? []).filter((w) => w.rsvp_status).length;
+  const witnessIds = (witnesses ?? []).map((w) => w.id);
+
+  const { data: includedContributions } = witnessIds.length
+    ? await supabase
+        .from("witness_contributions")
+        .select("id")
+        .in("witness_id", witnessIds)
+        .eq("include_in_ceremony", true)
+    : { data: [] as { id: string }[] };
+
+  const { data: contributionMoments } = await supabase
+    .from("ceremony_timeline")
+    .select("id")
+    .eq("ceremony_id", id)
+    .eq("moment_kind", "witness_contribution");
+
+  const showOrphanedContributionNudge =
+    (includedContributions?.length ?? 0) > 0 && (contributionMoments?.length ?? 0) === 0;
 
   const isCeremonyDay = ceremony.date === new Date().toISOString().slice(0, 10);
 
@@ -95,6 +117,33 @@ export default async function DirectorPage({
           </div>
         </section>
 
+        {vendors && vendors.length > 0 ? (
+          <section className="flex flex-col gap-3">
+            <h2 className="text-lg font-medium">Vendors</h2>
+            <ul className="flex flex-col gap-3">
+              {vendors.map((v) => (
+                <li key={v.id} className="flex flex-col gap-2">
+                  <p className="font-serif text-base">{v.name}</p>
+                  <VendorBookingStatusEditor
+                    vendor={{
+                      id: v.id,
+                      bookingStatus: v.booking_status,
+                      contactPerson: v.contact_person,
+                      contactPhone: v.contact_phone,
+                      bookingReference: v.booking_reference,
+                      arrivalTime: v.arrival_time,
+                      serviceStartTime: v.service_start_time,
+                      serviceEndTime: v.service_end_time,
+                      amountOutstanding: v.amount_outstanding,
+                      vendorNotes: v.vendor_notes,
+                    }}
+                  />
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+
         <section className="flex flex-col gap-2 rounded-sm border border-champagne/40 bg-parchment/60 px-5 py-4">
           <h2 className="text-sm font-medium">Your Witness Circle</h2>
           {witnessCount > 0 ? (
@@ -105,6 +154,22 @@ export default async function DirectorPage({
             <p className="text-sm text-ink-soft">No witnesses invited yet.</p>
           )}
         </section>
+
+        {showOrphanedContributionNudge ? (
+          <section className="flex flex-col gap-2 rounded-sm border border-champagne/40 bg-parchment/60 px-5 py-4">
+            <p className="text-sm text-ink-soft">
+              A witness message is marked for the ceremony, but there&apos;s no Witness Contribution
+              moment in your programme yet.{" "}
+              <Link
+                href={`/ceremonies/${id}/builder`}
+                className="font-medium text-ink underline underline-offset-2"
+              >
+                Add one in Builder
+              </Link>
+              .
+            </p>
+          </section>
+        ) : null}
 
         <section className="flex flex-col gap-3">
           {ceremony.status === "ready" ? (

@@ -72,3 +72,46 @@ export async function selectVowDraft(ceremonyId: string, vowText: string) {
 
   revalidatePath(`/ceremonies/${ceremonyId}/builder`);
 }
+
+// The Witness Contribution moment is an ordinary ceremony_timeline row
+// (tagged via moment_kind), not a second structure — Wedding Director's
+// Ceremony Mode reads it the same way it reads any other moment.
+export async function addWitnessContributionMoment(ceremonyId: string) {
+  const supabase = await createClient();
+  const { data: existing } = await supabase
+    .from("ceremony_timeline")
+    .select("id")
+    .eq("ceremony_id", ceremonyId)
+    .eq("moment_kind", "witness_contribution")
+    .single();
+  if (existing) return;
+
+  const { data: moments } = await supabase
+    .from("ceremony_timeline")
+    .select("order_index")
+    .eq("ceremony_id", ceremonyId)
+    .order("order_index", { ascending: false })
+    .limit(1);
+  const nextOrderIndex = (moments?.[0]?.order_index ?? -1) + 1;
+
+  await supabase.from("ceremony_timeline").insert({
+    ceremony_id: ceremonyId,
+    moment_name: "Witness messages",
+    order_index: nextOrderIndex,
+    moment_kind: "witness_contribution",
+  });
+
+  revalidatePath(`/ceremonies/${ceremonyId}/builder`);
+}
+
+export async function removeWitnessContributionMoment(ceremonyId: string, momentId: string) {
+  const supabase = await createClient();
+  await supabase
+    .from("ceremony_timeline")
+    .delete()
+    .eq("id", momentId)
+    .eq("ceremony_id", ceremonyId)
+    .eq("moment_kind", "witness_contribution");
+
+  revalidatePath(`/ceremonies/${ceremonyId}/builder`);
+}

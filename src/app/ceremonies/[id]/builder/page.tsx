@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { seedTimeline, reorderMoment, selectVowDraft } from "./actions";
+import {
+  seedTimeline,
+  reorderMoment,
+  selectVowDraft,
+  addWitnessContributionMoment,
+  removeWitnessContributionMoment,
+} from "./actions";
 import { AppHeader } from "@/components/app-header";
 import { CeremonyNav } from "@/components/ceremony-nav";
 import { PrintButton } from "@/components/print-button";
@@ -32,9 +38,13 @@ export default async function BuilderPage({
 
   const { data: timeline } = await supabase
     .from("ceremony_timeline")
-    .select("id, moment_name, order_index")
+    .select("id, moment_name, order_index, moment_kind")
     .eq("ceremony_id", id)
     .order("order_index");
+
+  const hasWitnessContributionMoment = (timeline ?? []).some(
+    (m) => m.moment_kind === "witness_contribution",
+  );
 
   const vowDrafts = ceremony.vows?.includes("\n\n---\n\n")
     ? ceremony.vows.split("\n\n---\n\n")
@@ -120,8 +130,13 @@ export default async function BuilderPage({
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <span className="font-serif text-lg">{moment.moment_name}</span>
+                    {moment.moment_kind === "witness_contribution" ? (
+                      <span className="text-xs uppercase tracking-wide text-ink-soft">
+                        Witness messages
+                      </span>
+                    ) : null}
                   </div>
-                  <div className="flex gap-3 text-ink-soft print:hidden">
+                  <div className="flex items-center gap-3 text-ink-soft print:hidden">
                     <form action={reorderMoment.bind(null, id, moment.id, "up")}>
                       <button
                         type="submit"
@@ -140,11 +155,31 @@ export default async function BuilderPage({
                         ↓
                       </button>
                     </form>
+                    {moment.moment_kind === "witness_contribution" ? (
+                      <form action={removeWitnessContributionMoment.bind(null, id, moment.id)}>
+                        <button
+                          type="submit"
+                          className="text-xs underline underline-offset-2 hover:text-wine"
+                        >
+                          Remove
+                        </button>
+                      </form>
+                    ) : null}
                   </div>
                 </li>
               ))}
             </ul>
           </div>
+          {!hasWitnessContributionMoment ? (
+            <form action={addWitnessContributionMoment.bind(null, id)} className="print:hidden">
+              <button
+                type="submit"
+                className="text-sm font-medium text-ink underline underline-offset-2"
+              >
+                Add witness messages to your programme
+              </button>
+            </form>
+          ) : null}
         </section>
       </main>
     </div>

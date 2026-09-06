@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { VendorBookingStatusEditor, type VendorBookingData } from "@/components/vendor-booking-status-editor";
+import type { VendorBookingStatus } from "@/lib/types/database";
 
 interface Category {
   id: string;
@@ -23,6 +25,30 @@ interface ShortlistEntry {
   ai_rationale: string | null;
   selected: boolean;
   outreach_draft: OutreachDraft | null;
+  booking_status: VendorBookingStatus;
+  contact_person: string | null;
+  contact_phone: string | null;
+  booking_reference: string | null;
+  arrival_time: string | null;
+  service_start_time: string | null;
+  service_end_time: string | null;
+  amount_outstanding: number | null;
+  vendor_notes: string | null;
+}
+
+function toBookingData(v: ShortlistEntry): VendorBookingData {
+  return {
+    id: v.id,
+    bookingStatus: v.booking_status,
+    contactPerson: v.contact_person,
+    contactPhone: v.contact_phone,
+    bookingReference: v.booking_reference,
+    arrivalTime: v.arrival_time,
+    serviceStartTime: v.service_start_time,
+    serviceEndTime: v.service_end_time,
+    amountOutstanding: v.amount_outstanding,
+    vendorNotes: v.vendor_notes,
+  };
 }
 
 const STATUS_OPTIONS: OutreachDraft["status"][] = ["not_sent", "sent", "replied", "booked"];
@@ -179,6 +205,30 @@ export function VendorsClient({
                   {v.ai_rationale}
                 </p>
               ) : null}
+
+              <VendorBookingStatusEditor
+                vendor={toBookingData(v)}
+                onUpdated={(next) =>
+                  setShortlist((prev) =>
+                    prev.map((entry) =>
+                      entry.id === v.id
+                        ? {
+                            ...entry,
+                            booking_status: next.bookingStatus,
+                            contact_person: next.contactPerson,
+                            contact_phone: next.contactPhone,
+                            booking_reference: next.bookingReference,
+                            arrival_time: next.arrivalTime,
+                            service_start_time: next.serviceStartTime,
+                            service_end_time: next.serviceEndTime,
+                            amount_outstanding: next.amountOutstanding,
+                            vendor_notes: next.vendorNotes,
+                          }
+                        : entry,
+                    ),
+                  )
+                }
+              />
 
               {v.outreach_draft ? (
                 <div className="flex flex-col gap-3 rounded-sm bg-parchment/60 p-4">

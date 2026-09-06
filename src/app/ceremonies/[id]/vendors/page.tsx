@@ -33,7 +33,9 @@ export default async function VendorsPage({
 
   const { data: shortlist } = await supabase
     .from("vendor_shortlist")
-    .select("id, category_id, name, address, ai_rationale, selected")
+    .select(
+      "id, category_id, name, address, ai_rationale, selected, booking_status, contact_person, contact_phone, booking_reference, arrival_time, service_start_time, service_end_time, amount_outstanding, vendor_notes",
+    )
     .eq("ceremony_id", id)
     .order("created_at");
 

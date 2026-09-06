@@ -18,6 +18,8 @@ export type OutreachStatus = "not_sent" | "sent" | "replied" | "booked";
 
 export type TimelineEventStatus = "upcoming" | "ready" | "active" | "delayed" | "completed" | "skipped";
 
+export type MomentKind = "witness_contribution";
+
 export type VendorBookingStatus =
   | "not_contacted"
   | "contacted"
@@ -149,6 +151,7 @@ export interface Database {
           event_status: TimelineEventStatus;
           actual_start_at: string | null;
           actual_end_at: string | null;
+          moment_kind: MomentKind | null;
         };
         Insert: {
           id?: string;
@@ -160,6 +163,7 @@ export interface Database {
           event_status?: TimelineEventStatus;
           actual_start_at?: string | null;
           actual_end_at?: string | null;
+          moment_kind?: MomentKind | null;
         };
         Update: Partial<{
           id: string;
@@ -171,6 +175,7 @@ export interface Database {
           event_status: TimelineEventStatus;
           actual_start_at: string | null;
           actual_end_at: string | null;
+          moment_kind: MomentKind | null;
         }>;
         Relationships: [];
       };
