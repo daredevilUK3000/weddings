@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { RegistryGenerator } from "./extras-client";
 import { AppHeader } from "@/components/app-header";
 import { CeremonyNav } from "@/components/ceremony-nav";
-import { DeleteCeremonyButton } from "@/components/delete-ceremony-button";
+import { CeremonyDangerActions } from "@/components/ceremony-danger-actions";
 
 export default async function ExtrasPage({
   params,
@@ -91,7 +91,7 @@ export default async function ExtrasPage({
         </section>
 
         <section>
-          <DeleteCeremonyButton ceremonyId={id} variant="danger-zone" />
+          <CeremonyDangerActions ceremonyId={id} variant="danger-zone" />
         </section>
       </main>
     </div>

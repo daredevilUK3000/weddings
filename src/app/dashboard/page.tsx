@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SignOutButton } from "@/components/sign-out-button";
 import { AppHeader } from "@/components/app-header";
-import { DeleteCeremonyButton } from "@/components/delete-ceremony-button";
+import { CeremonyDangerActions } from "@/components/ceremony-danger-actions";
 import type { CeremonyStatus } from "@/lib/types/database";
 
 const VIBE_LABEL: Record<string, string> = {
@@ -78,7 +78,7 @@ function CeremonyCard({ c }: { c: Ceremony }) {
   return (
     <div className="relative flex flex-col gap-4 rounded-sm border border-ink/10 bg-white/40 px-6 py-6 transition-all hover:border-champagne/50 hover:bg-white">
       <div className="absolute right-4 top-4">
-        <DeleteCeremonyButton ceremonyId={c.id} variant="kebab" />
+        <CeremonyDangerActions ceremonyId={c.id} variant="kebab" />
       </div>
       <Link href={primaryHref} className="flex flex-col gap-4">
         <div className="pr-10">
