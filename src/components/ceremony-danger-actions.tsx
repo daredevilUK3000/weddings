@@ -102,7 +102,7 @@ export function CeremonyDangerActions({
               e.stopPropagation();
               setMenuOpen((v) => !v);
             }}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-parchment hover:text-ink"
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-ink/15 bg-white/70 text-ink-soft transition-colors hover:border-ink/30 hover:bg-white hover:text-ink"
           >
             <span aria-hidden className="text-lg leading-none">
               ⋯
