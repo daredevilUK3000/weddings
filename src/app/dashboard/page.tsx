@@ -81,7 +81,7 @@ function CeremonyCard({ c }: { c: Ceremony }) {
         <CeremonyDangerActions ceremonyId={c.id} variant="kebab" />
       </div>
       <Link href={primaryHref} className="flex flex-col gap-4">
-        <div className="pr-10">
+        <div className="pr-24">
           <p className="text-xs font-medium uppercase tracking-[0.15em] text-champagne">
             Your ceremony
           </p>

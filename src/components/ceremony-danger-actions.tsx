@@ -96,16 +96,16 @@ export function CeremonyDangerActions({
         <div className="relative">
           <button
             type="button"
-            aria-label="Ceremony options"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               setMenuOpen((v) => !v);
             }}
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-ink/15 bg-white/70 text-ink-soft transition-colors hover:border-ink/30 hover:bg-white hover:text-ink"
+            className="flex items-center gap-1.5 rounded-full border border-ink/25 bg-white px-3 py-1.5 text-xs font-medium text-ink shadow-sm transition-colors hover:border-ink/50 hover:bg-parchment"
           >
-            <span aria-hidden className="text-lg leading-none">
-              ⋯
+            Manage
+            <span aria-hidden className="text-sm leading-none">
+              ▾
             </span>
           </button>
           {menuOpen ? (
