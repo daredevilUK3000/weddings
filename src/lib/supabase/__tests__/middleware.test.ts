@@ -110,6 +110,18 @@ describe("updateSession (auth proxy)", () => {
     expect(res.headers.get("location")).toBeNull();
   });
 
+  it("lets a locked user reach /api/checkout to pay their way out", async () => {
+    getUser.mockResolvedValue({ data: { user: { id: "user-1" } } });
+    single.mockResolvedValue({
+      data: { trial_ends_at: "2020-01-01T00:00:00Z", unlocked_at: null },
+    });
+
+    const res = await updateSession(makeRequest("/api/checkout"));
+
+    expect(res.status).not.toBe(403);
+    expect(res.status).not.toBe(307);
+  });
+
   it("fails open (does not lock) if the profile lookup errors, e.g. before the migration lands", async () => {
     getUser.mockResolvedValue({ data: { user: { id: "user-1" } } });
     single.mockResolvedValue({ data: null, error: { message: "column does not exist" } });
@@ -129,6 +141,7 @@ describe("updateSession (auth proxy)", () => {
     "/api/witness/tok_abc/rsvp",
     "/api/certificate/pdf",
     "/api/cron/notifications",
+    "/api/webhooks/stripe",
   ])(
     "allows an unauthenticated user to reach the public path %s",
     async (path) => {

@@ -8,6 +8,9 @@ import { NextResponse, type NextRequest } from "next/server";
 // /api/cron/notifications is the same shape of exception: it's called by
 // an external scheduler (GitHub Actions) with no Supabase session at all,
 // and enforces its own CRON_SECRET bearer-token check.
+// /api/webhooks/stripe is the same shape again: Stripe calls it
+// server-to-server with no Supabase session, and enforces its own
+// authorization via the Stripe signature (see that route).
 const PUBLIC_PATHS = [
   "/login",
   "/sign-up",
@@ -21,6 +24,7 @@ const PUBLIC_PATHS = [
   "/api/witness",
   "/api/certificate/pdf",
   "/api/cron",
+  "/api/webhooks/stripe",
 ];
 
 // Routes gated by the 14-day trial lock (see WeddingsStuff for Claude/

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/app-header";
 import { SignOutButton } from "@/components/sign-out-button";
+import { UnlockButton } from "@/components/unlock-button";
 
 export const metadata = {
   title: "Your ceremony is saved — Weddings for One",
@@ -58,16 +59,17 @@ export default async function LockedPage() {
           unlocks it permanently, for as long as WeddingsForOne exists.
         </p>
 
-        <a
-          href="mailto:info@weddingsforone.com?subject=Unlock%20my%20ceremony"
-          className="rounded-sm bg-ink px-6 py-3 text-sm font-medium text-ivory transition-all hover:-translate-y-0.5 hover:bg-wine"
-        >
-          Unlock your ceremony
-        </a>
+        <UnlockButton />
 
         <p className="text-xs text-ink-soft">
-          Payment is being finalized — email us and we&apos;ll unlock it for you directly in the
-          meantime.
+          One-time payment, no subscription. Trouble with checkout? Email{" "}
+          <a
+            href="mailto:info@weddingsforone.com?subject=Unlock%20my%20ceremony"
+            className="text-wine underline underline-offset-2"
+          >
+            info@weddingsforone.com
+          </a>{" "}
+          and we&apos;ll unlock it for you directly.
         </p>
 
         <Link

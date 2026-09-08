@@ -53,6 +53,8 @@ export interface Database {
           created_at: string;
           trial_ends_at: string;
           unlocked_at: string | null;
+          stripe_checkout_session_id: string | null;
+          stripe_payment_intent_id: string | null;
         };
         Insert: {
           id: string;
@@ -62,6 +64,8 @@ export interface Database {
           created_at?: string;
           trial_ends_at?: string;
           unlocked_at?: string | null;
+          stripe_checkout_session_id?: string | null;
+          stripe_payment_intent_id?: string | null;
         };
         Update: Partial<{
           id: string;
@@ -71,6 +75,8 @@ export interface Database {
           created_at: string;
           trial_ends_at: string;
           unlocked_at: string | null;
+          stripe_checkout_session_id: string | null;
+          stripe_payment_intent_id: string | null;
         }>;
         Relationships: [];
       };
