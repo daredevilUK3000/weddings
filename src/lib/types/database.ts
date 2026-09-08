@@ -51,6 +51,8 @@ export interface Database {
           name: string | null;
           tier: "free" | "premium";
           created_at: string;
+          trial_ends_at: string;
+          unlocked_at: string | null;
         };
         Insert: {
           id: string;
@@ -58,6 +60,8 @@ export interface Database {
           name?: string | null;
           tier?: "free" | "premium";
           created_at?: string;
+          trial_ends_at?: string;
+          unlocked_at?: string | null;
         };
         Update: Partial<{
           id: string;
@@ -65,6 +69,8 @@ export interface Database {
           name: string | null;
           tier: "free" | "premium";
           created_at: string;
+          trial_ends_at: string;
+          unlocked_at: string | null;
         }>;
         Relationships: [];
       };
