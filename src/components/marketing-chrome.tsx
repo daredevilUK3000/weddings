@@ -44,12 +44,23 @@ export function MarketingNav({
 
 export function MarketingFooter() {
   return (
-    <footer className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-8 text-[13px] text-ink-soft sm:px-14">
+    <footer className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-6 py-8 text-[13px] text-ink-soft sm:flex-row sm:items-center sm:justify-between sm:px-14">
       <span className="flex items-center gap-3 text-ink">
         <SealIcon className="h-[56px] w-[56px]" />
         <Wordmark className="text-[28px]" />
       </span>
-      <span>A ceremony of one</span>
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+        <span>A ceremony of one</span>
+        <Link href="/terms" className="hover:text-ink">
+          Terms
+        </Link>
+        <Link href="/privacy" className="hover:text-ink">
+          Privacy
+        </Link>
+        <Link href="/contact" className="hover:text-ink">
+          Contact
+        </Link>
+      </div>
     </footer>
   );
 }
