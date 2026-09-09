@@ -1,11 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const { getUser, single, select, insert, from } = vi.hoisted(() => {
+const { getUser, single, select, insert, updateEq, update, from } = vi.hoisted(() => {
   const single = vi.fn();
   const select = vi.fn(() => ({ single }));
   const insert = vi.fn(() => ({ select }));
-  const from = vi.fn((_table: string) => ({ insert }));
-  return { getUser: vi.fn(), single, select, insert, from };
+  const updateEq = vi.fn(async () => ({ error: null }));
+  const update = vi.fn(() => ({ eq: updateEq }));
+  const from = vi.fn((table: string) => (table === "profiles" ? { update } : { insert }));
+  return { getUser: vi.fn(), single, select, insert, updateEq, update, from };
 });
 
 vi.mock("@/lib/supabase/server", () => ({
@@ -53,6 +55,8 @@ describe("createCeremony", () => {
     single.mockReset();
     select.mockClear();
     insert.mockClear();
+    update.mockClear();
+    updateEq.mockClear();
     from.mockClear();
     vi.mocked(redirect).mockClear();
   });
@@ -119,6 +123,30 @@ describe("createCeremony", () => {
         priority_ranking: [],
       }),
     );
+  });
+
+  it("persists a submitted name to profiles.name before creating the ceremony", async () => {
+    getUser.mockResolvedValue({ data: { user: { id: "user-1" } } });
+    single.mockResolvedValue({ data: { id: "ceremony-1" }, error: null });
+
+    await expect(
+      createCeremony(formDataFrom({ vibe: "spiritual", name: "  Sam  " })),
+    ).rejects.toThrow("NEXT_REDIRECT");
+
+    expect(from).toHaveBeenCalledWith("profiles");
+    expect(update).toHaveBeenCalledWith({ name: "Sam" });
+    expect(updateEq).toHaveBeenCalledWith("id", "user-1");
+  });
+
+  it("does not touch profiles when no name is submitted (already set, or skipped)", async () => {
+    getUser.mockResolvedValue({ data: { user: { id: "user-1" } } });
+    single.mockResolvedValue({ data: { id: "ceremony-1" }, error: null });
+
+    await expect(createCeremony(formDataFrom({ vibe: "spiritual" }))).rejects.toThrow(
+      "NEXT_REDIRECT",
+    );
+
+    expect(update).not.toHaveBeenCalled();
   });
 
   it("throws instead of redirecting when the insert fails", async () => {

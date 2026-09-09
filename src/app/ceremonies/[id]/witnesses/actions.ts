@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getBaseUrl } from "@/lib/base-url";
+import { displayName } from "@/lib/display-name";
 import { sendWitnessEmail } from "@/lib/notifications/send";
 import { witnessInvitationEmail } from "@/lib/email-templates/witness-invitation";
 import { witnessSigningRequestEmail } from "@/lib/email-templates/witness-signing-request";
@@ -71,10 +72,10 @@ export async function inviteWitness(ceremonyId: string, formData: FormData) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("name, email")
+    .select("name")
     .eq("id", user.id)
     .single();
-  const hostName = profile?.name ?? profile?.email ?? "Your friend";
+  const hostName = displayName(profile?.name, "Your friend");
 
   const baseUrl = await getBaseUrl();
   const dateLine = [ceremony.date ? formatCeremonyDate(ceremony.date) : null, ceremony.start_time, ceremony.location]
@@ -131,10 +132,10 @@ export async function requestSignature(ceremonyId: string, witnessId: string) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("name, email")
+    .select("name")
     .eq("id", user.id)
     .single();
-  const hostName = profile?.name ?? profile?.email ?? "Your friend";
+  const hostName = displayName(profile?.name, "Your friend");
   const baseUrl = await getBaseUrl();
 
   const { subject, html } = witnessSigningRequestEmail({

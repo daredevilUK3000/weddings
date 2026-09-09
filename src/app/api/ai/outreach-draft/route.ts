@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { generateOutreachDraft } from "@/lib/ai/outreach";
+import { displayName } from "@/lib/display-name";
 
 export async function POST(req: Request) {
   const {
@@ -43,7 +44,7 @@ export async function POST(req: Request) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("name, email")
+    .select("name")
     .eq("id", user.id)
     .single();
 
@@ -55,7 +56,7 @@ export async function POST(req: Request) {
     location: ceremony.location,
     budgetBand: ceremony.budget_band,
     guestCount: ceremony.guest_count,
-    clientName: profile?.name ?? profile?.email ?? "the client",
+    clientName: displayName(profile?.name, "the client"),
     categorySpecificAsk,
   });
 

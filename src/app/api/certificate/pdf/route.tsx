@@ -16,6 +16,7 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { getWitnessByToken } from "@/lib/supabase/witness";
+import { displayName as safeDisplayName } from "@/lib/display-name";
 import type { SignatureType, Vibe } from "@/lib/types/database";
 import { LEAF_PATH, SPRIG_STEMS, SPRIG_LEAVES, SPRIG_DOTS } from "@/lib/cert-sprig";
 import { formatCeremonyDate } from "@/lib/format-ceremony-date";
@@ -299,10 +300,10 @@ function Certificate({ name, date, vowSummary, signedWitnesses }: CertificatePro
   // The certificate holds one short, quotable line — not a full vow paragraph.
   const displaySummary =
     vowSummary.length > 160 ? `${vowSummary.slice(0, 157).trimEnd()}…` : vowSummary;
-  // The 62pt script name falls back to a full email when no profile name is
-  // set — unbounded, that can wrap onto multiple lines and, combined with
-  // any later overflow (e.g. witness signatures), trips a react-pdf
-  // pagination bug that renders a corrupted extra page. Cap it defensively.
+  // The 62pt script name is unbounded otherwise — a genuinely long real
+  // name can wrap onto multiple lines and, combined with any later overflow
+  // (e.g. witness signatures), trips a react-pdf pagination bug that
+  // renders a corrupted extra page. Cap it defensively.
   const displayName = name.length > 24 ? `${name.slice(0, 21).trimEnd()}…` : name;
   const displayDate = date ? formatCeremonyDate(date) : null;
 
@@ -443,7 +444,7 @@ export async function GET(req: Request) {
   const service = createServiceClient();
   const { data: profile } = await service
     .from("profiles")
-    .select("name, email")
+    .select("name")
     .eq("id", ceremony.user_id)
     .single();
 
@@ -474,7 +475,7 @@ export async function GET(req: Request) {
 
   const stream = await renderToStream(
     <Certificate
-      name={profile?.name ?? profile?.email ?? "Celebrant"}
+      name={safeDisplayName(profile?.name, "Celebrant")}
       date={ceremony.date}
       vowSummary={vowSummary}
       vibe={ceremony.vibe}

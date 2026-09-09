@@ -25,6 +25,7 @@ const PRIORITIES = [
 ];
 
 interface Answers {
+  name: string;
   reason: string;
   vibe: string;
   location: string;
@@ -35,6 +36,7 @@ interface Answers {
 }
 
 const EMPTY_ANSWERS: Answers = {
+  name: "",
   reason: "",
   vibe: "",
   location: "",
@@ -44,10 +46,11 @@ const EMPTY_ANSWERS: Answers = {
   priorities: [],
 };
 
-type Step = "reason" | "reveal" | "vibe" | "place" | "people" | "summary" | "auth" | "sent";
+type Step = "reason" | "reveal" | "name" | "vibe" | "place" | "people" | "summary" | "auth" | "sent";
 
 function answersToFormData(answers: Answers): FormData {
   const fd = new FormData();
+  fd.set("name", answers.name);
   fd.set("reason", answers.reason);
   fd.set("vibe", answers.vibe);
   fd.set("guest_count", String(answers.guest_count || 0));
@@ -89,9 +92,18 @@ function ContinueButton({
   );
 }
 
-export function OnboardingFlow({ isAuthenticated }: { isAuthenticated: boolean }) {
+export function OnboardingFlow({
+  isAuthenticated,
+  existingName,
+}: {
+  isAuthenticated: boolean;
+  existingName?: string | null;
+}) {
   const [step, setStep] = useState<Step>("reason");
-  const [answers, setAnswers] = useState<Answers>(EMPTY_ANSWERS);
+  const [answers, setAnswers] = useState<Answers>(() => ({
+    ...EMPTY_ANSWERS,
+    name: existingName ?? "",
+  }));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState<string | null>(null);
@@ -165,7 +177,24 @@ export function OnboardingFlow({ isAuthenticated }: { isAuthenticated: boolean }
             &ldquo;{answers.reason}&rdquo;
           </p>
           <p className="text-sm text-ink-soft">That&apos;s going into your ceremony.</p>
-          <ContinueButton onClick={() => setStep("vibe")} />
+          <ContinueButton onClick={() => setStep(existingName ? "vibe" : "name")} />
+        </div>
+      ) : null}
+
+      {step === "name" ? (
+        <div className="flex flex-col gap-6 animate-[fadeIn_0.5s_ease]">
+          <p className="text-sm font-medium tracking-wide text-champagne uppercase">
+            Making this feel like yours
+          </p>
+          <Prompt>What should we call you?</Prompt>
+          <input
+            autoFocus
+            value={answers.name}
+            onChange={(e) => update("name", e.target.value)}
+            placeholder="Your first name is plenty"
+            className="rounded-sm border border-ink/15 bg-white px-4 py-3 font-serif text-lg outline-none focus:border-champagne"
+          />
+          <ContinueButton disabled={!answers.name.trim()} onClick={() => setStep("vibe")} />
         </div>
       ) : null}
 

@@ -14,6 +14,15 @@ export async function createCeremony(formData: FormData) {
     redirect("/login");
   }
 
+  // Collected once here (skipped in the flow if already set) rather than
+  // per-ceremony — it's the display name used anywhere generated content
+  // addresses the account owner (witness invites, the certificate, vendor
+  // outreach), never their raw email. See src/lib/display-name.ts.
+  const name = (formData.get("name") as string | null)?.trim();
+  if (name) {
+    await supabase.from("profiles").update({ name }).eq("id", user.id);
+  }
+
   const priorityRanking = formData.getAll("priority").map(String);
 
   const { data, error } = await supabase

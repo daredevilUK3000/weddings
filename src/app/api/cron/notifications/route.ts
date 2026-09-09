@@ -1,4 +1,5 @@
 import { createServiceClient } from "@/lib/supabase/service";
+import { displayName } from "@/lib/display-name";
 import { computeDueNotifications } from "@/lib/notifications/schedule";
 import { sendDirectorEmail, sendWitnessEmail } from "@/lib/notifications/send";
 import {
@@ -69,7 +70,7 @@ export async function GET(req: Request) {
       attempted++;
       if (notification.recipientType === "user") {
         if (!profile?.email) continue;
-        const hostName = profile.name ?? profile.email;
+        const hostName = displayName(profile.name, "Friend");
         const directorUrl = `${origin}/ceremonies/${ceremony.id}/director`;
         const { subject, html } =
           notification.notificationType === "director_7day"
@@ -89,7 +90,7 @@ export async function GET(req: Request) {
       } else {
         const witness = (witnesses ?? []).find((w) => w.id === notification.witnessId);
         if (!witness) continue;
-        const hostName = profile?.name ?? profile?.email ?? "your friend";
+        const hostName = displayName(profile?.name, "your friend");
         const portalUrl = `${origin}/witness/${witness.invite_token}`;
         const { subject, html } =
           notification.notificationType === "witness_reminder"

@@ -6,6 +6,7 @@ import { createCeremony } from "../actions";
 import { PENDING_CEREMONY_KEY } from "../onboarding-flow";
 
 interface StoredAnswers {
+  name: string;
   reason: string;
   vibe: string;
   location: string;
@@ -36,6 +37,7 @@ export default function OnboardingCompletePage() {
     window.localStorage.removeItem(PENDING_CEREMONY_KEY);
 
     const fd = new FormData();
+    fd.set("name", answers.name ?? "");
     fd.set("reason", answers.reason ?? "");
     fd.set("vibe", answers.vibe ?? "");
     fd.set("guest_count", String(answers.guest_count ?? 0));

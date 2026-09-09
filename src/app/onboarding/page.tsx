@@ -7,5 +7,15 @@ export default async function OnboardingPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  return <OnboardingFlow isAuthenticated={!!user} />;
+  let existingName: string | null = null;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("name")
+      .eq("id", user.id)
+      .single();
+    existingName = profile?.name ?? null;
+  }
+
+  return <OnboardingFlow isAuthenticated={!!user} existingName={existingName} />;
 }
