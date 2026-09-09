@@ -55,8 +55,22 @@ export default async function FaqPage() {
       </section>
 
       {/* FAQ LIST */}
-      <section className="px-6 pt-4 pb-24 sm:px-14 sm:pb-32">
+      <section className="px-6 pt-4 pb-16 sm:px-14 sm:pb-20">
         <FaqAccordion faqs={FAQS} />
+      </section>
+
+      {/* FOUNDER NOTE */}
+      <section className="px-6 pb-24 text-center sm:px-14 sm:pb-32">
+        <div className="mx-auto max-w-xl">
+          <span className="mx-auto mb-6 block h-px w-11 bg-champagne" aria-hidden="true" />
+          <p className="font-serif text-base italic leading-relaxed text-ink-soft">
+            WeddingsForOne was built by someone who&apos;s spent years around weddings from more
+            than one angle — as the founder of a wedding magazine, the author of several books on
+            the subject, and an ordained officiant who has personally conducted marriages. This
+            isn&apos;t a novelty side project; it&apos;s built by someone who takes the ceremony
+            itself seriously.
+          </p>
+        </div>
       </section>
 
       {/* CLOSING CTA */}

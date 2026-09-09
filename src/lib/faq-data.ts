@@ -3,15 +3,11 @@ export interface Faq {
   answer: string;
 }
 
-// Ordered as a narrative: credibility, then legal clarity, who it's for,
-// solo vs. witnessed, how the officiant works, quality, deliverables,
-// cost, privacy, and a warm closing reassurance.
+// Ordered as a narrative: legal clarity, who it's for, solo vs. witnessed,
+// how the officiant works, quality, deliverables, cost, why this instead of
+// a planner, vendor/religious/flexibility follow-ups, privacy, and a warm
+// closing reassurance.
 export const FAQS: Faq[] = [
-  {
-    question: "Isn't this just a joke, or a gimmick?",
-    answer:
-      "It isn't. Self-commitment ceremonies (sometimes called sologamy) have been part of the cultural conversation for two decades, and for the people who do them, the reasons are usually serious: recovering from something difficult, marking a milestone, or simply deciding they're done waiting for permission to celebrate their own life. We built this to give that moment the same care a traditional wedding gets — not to make light of it.",
-  },
   {
     question: "Is this legally binding?",
     answer:
@@ -43,12 +39,29 @@ export const FAQS: Faq[] = [
       "A full ceremony script, your vows, a timeline for the day, and a Certificate of Self-Commitment you can keep, frame, or share. If you use the planning side, you'll also have a shortlist of vendors and ready-to-send inquiries for your venue, photographer, and anything else you've chosen to arrange.",
   },
   {
-    // Revisit once pricing/tiering is decided — this answer is deliberately
-    // non-committal while the paywall is on hold. Update the copy, don't
-    // build conditional logic around it until real tiers exist.
     question: "Is there a cost?",
     answer:
-      "Weddings for One is currently free to use while we're in early access and refining the platform around real ceremonies. If that changes down the line, existing users will hear about it directly rather than being surprised by it.",
+      "You get full access to every part of WeddingsForOne — free — for 14 days from when you sign up, so you can actually build your ceremony before deciding anything. After that, a one-time payment of $49 permanently unlocks your ceremony — no recurring subscription.",
+  },
+  {
+    question: "Why would I use this instead of just hiring a wedding planner?",
+    answer:
+      "Most wedding planners have never worked with someone marrying themselves — their entire process, from vendor relationships to how they talk about \"the couple,\" is built around two people. You'd likely spend your first conversation explaining the idea before you got any real help. Planners are also priced for full-scale events, which rarely makes sense for a smaller, more personal ceremony. And the part of this that matters most — actually shaping your vows and your ceremony's meaning — isn't something a planner typically does at all; that's closer to what an officiant does, which is why it's built into the AI conversation at the center of this platform, not treated as an afterthought. Think of this less as a cheaper wedding planner, and more as something built specifically for a kind of ceremony that planners were never designed to serve.",
+  },
+  {
+    question: "How do I explain this to a vendor who's never heard of it?",
+    answer:
+      "We've thought about this one specifically. When you shortlist a venue, photographer, or florist, we draft a ready-to-send inquiry that explains what a self-commitment ceremony is in a normal, confident way — so you're never the one having to justify it from scratch.",
+  },
+  {
+    question: "Can I involve a religious or spiritual element in my ceremony?",
+    answer:
+      "Yes. Your officiant conversation is shaped by what matters to you, so if faith or spirituality is part of that, it can be reflected in your script and vows. The ceremony isn't tied to any one tradition — it's built around yours.",
+  },
+  {
+    question: "Can I change my mind about details after I've started?",
+    answer:
+      "Yes — nothing is locked in until you're ready. You can revisit your vows, reorder your ceremony timeline, and update vendor choices at any point while you're planning.",
   },
   {
     question: "What happens to my information?",
