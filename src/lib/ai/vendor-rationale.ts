@@ -37,7 +37,10 @@ Write a 1-2 sentence rationale explaining why this vendor could be a good fit fo
 specific client's ceremony. Be concrete and specific rather than generic — reference the
 vibe/style match directly. If you genuinely don't have enough information to say anything
 specific and credible, keep the rationale brief and honest rather than inventing detail
-that isn't there. No preamble, no quotes around it.`,
+that isn't there. No preamble, no quotes around it.
+
+The client's gender is unknown and never provided — do not guess it or use a gendered
+pronoun (he/him/his/she/her/hers) anywhere; use "they/them" or "the client" if needed.`,
   });
 
   return text.trim();

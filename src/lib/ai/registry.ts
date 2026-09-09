@@ -21,7 +21,10 @@ export async function generateRegistrySuggestions(ctx: {
 (sologamy) ceremony. Their vibe is ${ctx.vibe}, their reason for the ceremony is
 "${ctx.reason ?? "not specified"}", and their budget band is ${ctx.budgetBand ?? "not specified"}.
 Mix categories: an experience/trip, a course or skill, a wellness/therapy item, a keepsake
-(tattoo/jewelry), and one wildcard. Keep each description to one sentence.`,
+(tattoo/jewelry), and one wildcard. Keep each description to one sentence.
+
+Their gender is unknown and never provided — do not guess it or use a gendered pronoun
+(he/him/his/she/her/hers) anywhere; use "they/them" or address them as "you" if needed.`,
   });
 
   return output.suggestions;

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { CHAT_MODEL } from "@/lib/ai/models";
 import { officiantSystemPrompt, type OfficiantContext } from "@/lib/ai/officiant";
 import { serializeCeremonyScript, type ScriptSegment } from "@/lib/ceremony-script";
+import { containsGenderedPronoun, findGenderedPronouns } from "@/lib/ai/pronoun-guard";
 
 // Every segment of the script must be explicitly typed by the model —
 // structured output, not a prose-formatting instruction the model can
@@ -27,7 +28,10 @@ const scriptSegmentSchema = z.object({
     .string()
     .describe(
       "The heading, direction, or spoken text itself only — do not include a speaker label " +
-        "(e.g. \"OFFICIANT:\") or parentheses in this field; those are added separately based on type.",
+        "(e.g. \"OFFICIANT:\") or parentheses in this field; those are added separately based " +
+        "on type. Never a gendered pronoun (he/him/his/she/her/hers) — the client's gender is " +
+        "unknown and never guessed. Address the client as \"you,\" or use singular " +
+        "\"they/them/themself\" for any unavoidable third-person reference in direction.",
     ),
 });
 
@@ -44,11 +48,17 @@ const generatedContentSchema = z.object({
   vow_drafts: z
     .array(z.string())
     .length(3)
-    .describe("Three distinct full-length self-vow drafts the client can choose from or remix."),
+    .describe(
+      "Three distinct full-length self-vow drafts the client can choose from or remix. " +
+        "Written in first person (\"I promise myself...\") — never a gendered pronoun.",
+    ),
   witness_reading: z
     .string()
     .nullable()
-    .describe("An optional short reading a friend/witness could deliver, or null if not fitting."),
+    .describe(
+      "An optional short reading a friend/witness could deliver, or null if not fitting. " +
+        "Never a gendered pronoun about the client — \"you\" or singular \"they/them\" only.",
+    ),
 });
 
 export interface CeremonyContent {
@@ -57,16 +67,49 @@ export interface CeremonyContent {
   witness_reading: string | null;
 }
 
+function hasGenderedPronoun(output: z.infer<typeof generatedContentSchema>): boolean {
+  return (
+    output.ceremony_script.some((seg) => containsGenderedPronoun(seg.text)) ||
+    output.vow_drafts.some((v) => containsGenderedPronoun(v)) ||
+    (output.witness_reading !== null && containsGenderedPronoun(output.witness_reading))
+  );
+}
+
+// The client's gender is never asked and never known — any gendered
+// pronoun in generated content is necessarily an unrequested guess, not a
+// style slip. Rather than trust the prompt alone (the previous version of
+// this prompt already forbade this and it still happened in production),
+// verify the output and regenerate once with a sharper, example-specific
+// instruction if a gendered pronoun slipped through.
 export async function generateCeremonyContent(
   ctx: OfficiantContext,
   interviewTranscript: string,
 ): Promise<CeremonyContent> {
-  const { output } = await generateText({
+  const basePrompt = `Here is the interview transcript with the client:\n\n${interviewTranscript}\n\nUsing everything they shared, produce the ceremony script (as ordered, speaker-typed segments), three vow drafts, and an optional witness reading.`;
+
+  let { output } = await generateText({
     model: CHAT_MODEL,
     system: officiantSystemPrompt(ctx),
     output: Output.object({ schema: generatedContentSchema }),
-    prompt: `Here is the interview transcript with the client:\n\n${interviewTranscript}\n\nUsing everything they shared, produce the ceremony script (as ordered, speaker-typed segments), three vow drafts, and an optional witness reading.`,
+    prompt: basePrompt,
   });
+
+  if (hasGenderedPronoun(output)) {
+    const offending = [
+      ...output.ceremony_script.map((s) => s.text),
+      ...output.vow_drafts,
+      output.witness_reading ?? "",
+    ]
+      .flatMap((t) => findGenderedPronouns(t))
+      .join(", ");
+
+    ({ output } = await generateText({
+      model: CHAT_MODEL,
+      system: officiantSystemPrompt(ctx),
+      output: Output.object({ schema: generatedContentSchema }),
+      prompt: `${basePrompt}\n\nYour previous attempt used a gendered pronoun (${offending}) somewhere in the output. This is strictly forbidden — the client's gender is unknown and never guessed, from their name or anything else. Regenerate the entire response using only "you," or singular "they/them/themself" for any unavoidable third-person reference. Do not repeat the mistake.`,
+    }));
+  }
 
   return {
     ceremony_script: serializeCeremonyScript(output.ceremony_script as ScriptSegment[]),
