@@ -11,6 +11,7 @@ import {
 import { AppHeader } from "@/components/app-header";
 import { CeremonyNav } from "@/components/ceremony-nav";
 import { PrintButton } from "@/components/print-button";
+import { CeremonyScriptView } from "@/components/ceremony-script-view";
 
 export default async function BuilderPage({
   params,
@@ -67,9 +68,7 @@ export default async function BuilderPage({
               <h2 className="text-lg font-medium">Your ceremony script</h2>
               <PrintButton />
             </div>
-            <pre className="whitespace-pre-wrap rounded-sm border border-ink/10 bg-white/60 p-5 font-serif text-[15px] leading-relaxed print:border-none print:bg-transparent print:p-0">
-              {ceremony.ceremony_script}
-            </pre>
+            <CeremonyScriptView script={ceremony.ceremony_script} />
           </section>
         ) : (
           <p className="text-ink-soft">
