@@ -32,6 +32,90 @@ interface Ceremony {
   status: CeremonyStatus;
 }
 
+// Bold empty-state treatment — a brand-new user's first view, before any
+// ceremony exists. Deliberately a step up from the site's usual restraint
+// (see WeddingsStuff for Claude/weddingsforone-bold-dashboard-build-brief).
+// Only shown when there are zero ceremonies; the populated state below is
+// untouched.
+function EmptyStateHero() {
+  return (
+    <div className="relative overflow-hidden">
+      <div className="relative mx-auto grid w-full max-w-[1180px] grid-cols-1 items-center gap-16 px-7 pt-[60px] pb-[90px] min-[881px]:grid-cols-[1.15fr_0.85fr] min-[881px]:px-12 min-[881px]:pt-[90px] min-[881px]:pb-[140px]">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-[60px] -left-20 z-0 hidden font-serif text-[620px] leading-none text-parchment select-none min-[881px]:block"
+        >
+          W
+        </div>
+
+        <div className="relative z-10">
+          <div className="mb-7 h-px w-10 bg-champagne" />
+          <h1 className="rise-in-el m-0 animate-[riseIn_0.9s_ease_both] font-serif text-[56px] font-medium leading-[0.98] tracking-[-0.5px] min-[881px]:text-[88px]">
+            Your
+            <br />
+            ceremony
+            <br />
+            <em className="font-normal text-dusty-rose italic">begins here.</em>
+          </h1>
+          <p className="rise-in-el mb-12 max-w-[420px] animate-[riseIn_0.9s_ease_0.1s_both] font-serif text-2xl text-ink/65 italic">
+            Not a project. An occasion.
+          </p>
+          <div className="rise-in-el flex animate-[riseIn_0.9s_ease_0.2s_both] items-center gap-5">
+            <Link
+              href="/onboarding"
+              className="inline-flex items-center gap-3 rounded-sm bg-ink px-[34px] py-[19px] text-[14.5px] font-medium tracking-[0.4px] text-ivory transition-all hover:-translate-y-px hover:bg-wine"
+            >
+              Start planning a new ceremony
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                className="h-3.5 w-3.5"
+                aria-hidden
+              >
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+
+        <div className="rise-in-el relative z-10 animate-[riseIn_1s_ease_0.3s_both]">
+          <div className="group relative rotate-[1.4deg] border border-champagne/40 bg-ivory px-10 py-14 text-center shadow-[0_24px_60px_rgba(32,32,29,0.10)] transition-transform duration-[400ms] ease-out hover:rotate-0">
+            <span
+              aria-hidden
+              className="absolute top-[14px] left-[14px] h-[26px] w-[26px] border-t border-l border-champagne"
+            />
+            <span
+              aria-hidden
+              className="absolute right-[14px] bottom-[14px] h-[26px] w-[26px] border-r border-b border-champagne"
+            />
+            <div aria-hidden className="mb-1 font-serif text-[64px] leading-none text-champagne">
+              &ldquo;
+            </div>
+            <h2 className="mt-1 mb-4 font-serif text-[25px] leading-[1.3] font-medium text-wine italic">
+              Nothing planned yet —
+              <br />
+              and that&apos;s the point.
+            </h2>
+            <div className="mx-auto my-[22px] h-px w-8 bg-dusty-rose" />
+            <p className="text-[13.5px] leading-[1.7] text-ink/60">
+              This is the day you build for yourself.
+              <br />
+              Your officiant will walk you through it,
+              <br />
+              one question at a time.
+            </p>
+          </div>
+          <p className="mt-[18px] text-center text-xs tracking-[0.3px] text-ink/40">
+            Your certificate will look something like this
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Stage({ label, done }: { label: string; done: boolean }) {
   return (
     <div className="flex items-center justify-between border-t border-ink/8 py-2.5 text-sm first:border-t-0">
@@ -148,20 +232,20 @@ export default async function DashboardPage() {
         }
       />
 
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-16">
-        <div>
-          <h1 className="font-serif text-3xl font-medium">Your ceremony</h1>
-          <p className="mt-1 text-sm text-ink-soft">Not a project. An occasion.</p>
-        </div>
+      {ceremonies && ceremonies.length > 0 ? (
+        <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-16">
+          <div>
+            <h1 className="font-serif text-3xl font-medium">Your ceremony</h1>
+            <p className="mt-1 text-sm text-ink-soft">Not a project. An occasion.</p>
+          </div>
 
-        <Link
-          href="/onboarding"
-          className="rounded-sm bg-ink px-4 py-3 text-center font-medium text-ivory transition-all hover:-translate-y-0.5 hover:bg-wine"
-        >
-          Start planning a new ceremony
-        </Link>
+          <Link
+            href="/onboarding"
+            className="rounded-sm bg-ink px-4 py-3 text-center font-medium text-ivory transition-all hover:-translate-y-0.5 hover:bg-wine"
+          >
+            Start planning a new ceremony
+          </Link>
 
-        {ceremonies && ceremonies.length > 0 ? (
           <ul className="flex flex-col gap-4">
             {ceremonies.map((c) => (
               <li key={c.id}>
@@ -169,16 +253,12 @@ export default async function DashboardPage() {
               </li>
             ))}
           </ul>
-        ) : (
-          <div className="flex flex-col items-center gap-2 rounded-sm border border-dashed border-ink/15 bg-parchment/60 px-6 py-14 text-center">
-            <p className="font-serif text-xl">Nothing planned yet — and that's the point.</p>
-            <p className="max-w-sm text-sm text-ink-soft">
-              This is the day you build for yourself. Start above and your officiant will walk
-              you through it.
-            </p>
-          </div>
-        )}
-      </main>
+        </main>
+      ) : (
+        <main className="flex flex-1 flex-col justify-center">
+          <EmptyStateHero />
+        </main>
+      )}
     </div>
   );
 }

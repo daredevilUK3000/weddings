@@ -26,13 +26,13 @@ export function TrialStatusBar({ daysLeft }: { daysLeft: number }) {
       : `${daysLeft} days left in your trial`;
 
   return (
-    <div className="border-b border-champagne/30 bg-parchment/50 px-6 py-2 text-center text-sm text-ink-soft print:hidden">
+    <div className="bg-wine px-6 py-[13px] text-center text-[13.5px] tracking-[0.2px] text-ivory/90 print:hidden">
       {message} —{" "}
       <button
         type="button"
         onClick={startCheckout}
         disabled={pending}
-        className="font-medium text-ink underline decoration-champagne underline-offset-2 transition-colors hover:text-wine disabled:opacity-50"
+        className="font-semibold text-champagne underline decoration-champagne/55 underline-offset-2 transition-colors hover:decoration-champagne disabled:opacity-50"
       >
         {pending
           ? "Starting checkout…"

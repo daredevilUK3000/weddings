@@ -61,3 +61,25 @@ body {
     opacity: 0;
   }
 }
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dashboard empty-state hero entrance — the only motion on that page, so
+   this is the one spot that needs an explicit reduced-motion override
+   rather than relying on a JS check. */
+@media (prefers-reduced-motion: reduce) {
+  .rise-in-el {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
