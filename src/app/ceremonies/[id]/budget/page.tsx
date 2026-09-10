@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { seedBudgetItems, updateBudgetItem } from "./actions";
 import { AppHeader } from "@/components/app-header";
 import { CeremonyNav } from "@/components/ceremony-nav";
+import { Eyebrow } from "@/components/eyebrow";
 
 export default async function BudgetPage({
   params,
@@ -50,8 +51,8 @@ export default async function BudgetPage({
 
       <main className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-6 py-12">
         <div>
-          <p className="text-sm font-medium text-wine">Every dollar, still yours</p>
-          <h1 className="font-serif text-3xl font-medium">Budget tracker</h1>
+          <Eyebrow animate={false}>Every dollar, still yours</Eyebrow>
+          <h1 className="mt-3 font-serif text-3xl font-medium">Budget tracker</h1>
           <p className="mt-2 max-w-xl text-sm text-ink-soft">
             There&apos;s no splitting costs, no in-laws to please, and no one else&apos;s
             priorities to weigh against your own — just a clear picture of what this day
@@ -91,18 +92,18 @@ export default async function BudgetPage({
                         name="estimated_cost"
                         defaultValue={b.estimated_cost ?? ""}
                         placeholder="Estimated"
-                        className="w-28 rounded-sm border border-ink/15 bg-white px-2 py-1 outline-none focus:border-champagne"
+                        className="w-28 rounded-[2px] border border-[rgba(184,150,110,0.5)] bg-white px-2 py-1 outline-none transition-[border-color,box-shadow] duration-200 focus:border-dusty-rose focus:shadow-[0_0_0_3px_rgba(185,130,122,0.12)]"
                       />
                       <input
                         type="number"
                         name="actual_cost"
                         defaultValue={b.actual_cost ?? ""}
                         placeholder="Actual"
-                        className="w-28 rounded-sm border border-ink/15 bg-white px-2 py-1 outline-none focus:border-champagne"
+                        className="w-28 rounded-[2px] border border-[rgba(184,150,110,0.5)] bg-white px-2 py-1 outline-none transition-[border-color,box-shadow] duration-200 focus:border-dusty-rose focus:shadow-[0_0_0_3px_rgba(185,130,122,0.12)]"
                       />
                       <button
                         type="submit"
-                        className="rounded-sm border border-ink/15 px-3 py-1 transition-colors hover:border-champagne hover:text-wine"
+                        className="rounded-sm border border-[rgba(184,150,110,0.5)] px-3 py-1 transition-colors hover:border-dusty-rose hover:text-wine"
                       >
                         Save
                       </button>

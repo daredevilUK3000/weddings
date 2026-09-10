@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { VendorBookingStatusEditor, type VendorBookingData } from "@/components/vendor-booking-status-editor";
+import { INPUT_CLASS } from "@/lib/design-tokens";
 import type { VendorBookingStatus } from "@/lib/types/database";
 
 interface Category {
@@ -190,7 +191,7 @@ export function VendorsClient({
         <input
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          className="rounded-sm border border-ink/15 bg-white px-3 py-2.5 outline-none focus:border-champagne"
+          className={`${INPUT_CLASS} text-sm`}
         />
         {!location ? (
           <span className="text-xs text-ink-soft">
@@ -205,7 +206,7 @@ export function VendorsClient({
             key={c.id}
             onClick={() => search(c.slug)}
             disabled={searching === c.slug || !location}
-            className="rounded-sm border border-ink/15 bg-white px-3 py-2 text-sm transition-colors hover:border-champagne disabled:opacity-50"
+            className="rounded-sm border border-[rgba(184,150,110,0.5)] bg-white px-3 py-2 text-sm transition-colors hover:border-dusty-rose disabled:opacity-50"
           >
             {searching === c.slug ? `Searching ${c.name}…` : `Find ${c.name}`}
           </button>
@@ -232,7 +233,7 @@ export function VendorsClient({
             if (!results || results.length === 0) return null;
             return (
               <section key={c.id} className="flex flex-col gap-3">
-                <h2 className="text-sm font-medium uppercase tracking-wide text-ink-soft">
+                <h2 className="font-serif text-lg font-medium text-ink">
                   {c.name} — search results
                 </h2>
                 <ul className="flex flex-col gap-3">
@@ -271,7 +272,7 @@ export function VendorsClient({
       ) : null}
 
       {shortlist.length === 0 ? (
-        <div className="flex flex-col items-center gap-2 rounded-sm border border-dashed border-ink/15 bg-parchment/60 px-6 py-14 text-center">
+        <div className="flex flex-col items-center gap-2 rounded-sm border border-[rgba(184,150,110,0.5)] bg-parchment/60 px-6 py-14 text-center">
           <p className="font-serif text-lg">No vendors shortlisted yet.</p>
           <p className="max-w-sm text-sm text-ink-soft">
             Set a location and search a category above — we&apos;ll pull real venues,
@@ -283,9 +284,7 @@ export function VendorsClient({
         </div>
       ) : (
         <div className="flex flex-col gap-3">
-          <h2 className="text-sm font-medium uppercase tracking-wide text-ink-soft">
-            Your shortlist
-          </h2>
+          <h2 className="font-serif text-lg font-medium text-ink">Your shortlist</h2>
           <ul className="flex flex-col gap-4">
           {shortlist.map((v) => (
             <li
@@ -337,7 +336,7 @@ export function VendorsClient({
                         e.target.value as OutreachDraft["status"],
                       )
                     }
-                    className="w-fit rounded-sm border border-ink/15 bg-white px-2 py-1 text-sm"
+                    className="w-fit rounded-sm border border-[rgba(184,150,110,0.5)] bg-white px-2 py-1 text-sm"
                   >
                     {STATUS_OPTIONS.map((s) => (
                       <option key={s} value={s}>
@@ -352,7 +351,7 @@ export function VendorsClient({
                     placeholder="Anything specific to ask? (optional)"
                     value={asks[v.id] ?? ""}
                     onChange={(e) => setAsks((prev) => ({ ...prev, [v.id]: e.target.value }))}
-                    className="flex-1 rounded-sm border border-ink/15 bg-white px-3 py-2 text-sm outline-none focus:border-champagne"
+                    className={`flex-1 ${INPUT_CLASS} text-sm`}
                   />
                   <button
                     onClick={() => draftOutreach(v.id)}

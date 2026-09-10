@@ -5,6 +5,7 @@ import { MarketingNav, MarketingFooter } from "@/components/marketing-chrome";
 import { TaglineRotator } from "@/components/landing/tagline-rotator";
 import { VowPromptPreview } from "@/components/landing/vow-prompt-preview";
 import { CertificatePersonalizer } from "@/components/landing/certificate-personalizer";
+import { Eyebrow } from "@/components/eyebrow";
 
 export default async function LandingPage() {
   const supabase = await createClient();
@@ -92,10 +93,9 @@ export default async function LandingPage() {
               </svg>
             </div>
 
-            <p className="mb-8 text-[11.5px] font-semibold uppercase tracking-[0.16em] text-dusty-rose">
-              A vow, drafted with your officiant
-            </p>
-            <div className="mx-auto mb-8 h-px w-11 bg-champagne md:mx-0" />
+            <div className="mx-auto mb-8 w-fit md:mx-0">
+              <Eyebrow animate={false}>A vow, drafted with your officiant</Eyebrow>
+            </div>
 
             <span
               className="mb-[-6px] block font-serif text-[72px] italic leading-[0.5] text-champagne opacity-55 sm:text-[100px]"

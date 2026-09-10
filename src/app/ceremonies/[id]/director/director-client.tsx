@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { ceremonyStartDate, formatRelativeTime } from "@/lib/datetime";
 import { getDirectorMessage } from "@/lib/director/messages";
 import { ClaraMessage } from "@/components/clara-message";
+import { Eyebrow } from "@/components/eyebrow";
+import { ButtonArrowIcon } from "@/components/button-arrow-icon";
+import { PRIMARY_BUTTON_CLASS, RISE_IN_HEADLINE } from "@/lib/design-tokens";
 import type { NowNextLater } from "@/lib/director/timeline";
 import type { MomentKind, TimelineEventStatus } from "@/lib/types/database";
 
@@ -211,8 +214,12 @@ export function CeremonyModeView({
 
       {currentMoment ? (
         <div className="flex flex-col items-center gap-5">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-champagne">Now</p>
-          <h1 className="font-serif text-3xl font-medium">{currentMoment.momentName}</h1>
+          <Eyebrow animate={false}>Now</Eyebrow>
+          <h1
+            className={`font-serif text-[38px] leading-[1.05] font-medium tracking-[-0.3px] text-ink min-[701px]:text-[56px] ${RISE_IN_HEADLINE}`}
+          >
+            {currentMoment.momentName}
+          </h1>
 
           {currentMoment.momentKind === "witness_contribution" ? (
             <div className="flex max-w-md flex-col gap-4 text-left">
@@ -233,12 +240,9 @@ export function CeremonyModeView({
             </div>
           ) : null}
 
-          <button
-            onClick={handleComplete}
-            disabled={completing}
-            className="rounded-sm bg-ink px-6 py-3 text-sm font-medium text-ivory transition-all hover:-translate-y-0.5 hover:bg-wine disabled:opacity-50"
-          >
+          <button onClick={handleComplete} disabled={completing} className={PRIMARY_BUTTON_CLASS}>
             {completing ? "…" : "Mark complete"}
+            {completing ? null : <ButtonArrowIcon />}
           </button>
         </div>
       ) : (

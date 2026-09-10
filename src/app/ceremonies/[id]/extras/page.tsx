@@ -4,6 +4,7 @@ import { RegistryGenerator } from "./extras-client";
 import { AppHeader } from "@/components/app-header";
 import { CeremonyNav } from "@/components/ceremony-nav";
 import { CeremonyDangerActions } from "@/components/ceremony-danger-actions";
+import { Eyebrow } from "@/components/eyebrow";
 
 export default async function ExtrasPage({
   params,
@@ -49,8 +50,8 @@ export default async function ExtrasPage({
 
       <main className="mx-auto flex w-full max-w-2xl flex-col gap-12 px-6 py-12">
         <div>
-          <p className="text-sm font-medium text-wine">The little things</p>
-          <h1 className="font-serif text-3xl font-medium">Extras</h1>
+          <Eyebrow animate={false}>The little things</Eyebrow>
+          <h1 className="mt-3 font-serif text-3xl font-medium">Extras</h1>
           <p className="mt-2 text-sm text-ink-soft">
             The touches that make this feel like a full wedding, not just a ceremony.
           </p>
@@ -58,7 +59,7 @@ export default async function ExtrasPage({
 
         <section className="flex flex-col gap-3">
           <div>
-            <h2 className="text-lg font-medium">Registry of Self</h2>
+            <h2 className="font-serif text-2xl font-medium">Registry of Self</h2>
             <p className="mt-1 max-w-xl text-sm text-ink-soft">
               A normal wedding registry asks guests to buy the couple gifts. This one&apos;s
               just for you — ideas for how to treat yourself now that you&apos;ve made this
@@ -78,7 +79,7 @@ export default async function ExtrasPage({
             {comingSoon.map((item) => (
               <div
                 key={item.title}
-                className="flex flex-col gap-2 rounded-sm border border-dashed border-ink/15 bg-parchment/50 p-5"
+                className="flex flex-col gap-2 rounded-sm border border-[rgba(184,150,110,0.5)] bg-parchment/50 p-5"
               >
                 <span className="w-fit rounded-full border border-champagne/50 px-2.5 py-0.5 text-[11px] font-medium tracking-wide text-wine">
                   Coming soon

@@ -4,6 +4,16 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { OFFICIANT_STAGES } from "@/lib/officiant-questions";
 import { ClaraMessage } from "@/components/clara-message";
+import { Eyebrow } from "@/components/eyebrow";
+import { Watermark } from "@/components/watermark";
+import { ButtonArrowIcon } from "@/components/button-arrow-icon";
+import {
+  PRIMARY_BUTTON_CLASS,
+  INPUT_EMOTIONAL_CLASS,
+  RISE_IN_HEADLINE,
+  RISE_IN_FIELD,
+  RISE_IN_ACTIONS,
+} from "@/lib/design-tokens";
 
 type Phase = "question" | "acknowledging" | "complete";
 
@@ -95,113 +105,110 @@ export function OfficiantExperience({ ceremonyId }: { ceremonyId: string }) {
   const stage = OFFICIANT_STAGES[stageIndex];
 
   return (
-    <div className="flex flex-1 flex-col justify-center px-8 py-12 md:px-16 md:py-16">
-      {/* PROGRESS */}
-      {phase !== "complete" ? (
-        <div className="mb-10 md:mb-14">
-          <div className="flex items-center gap-1.5" aria-hidden="true">
-            {OFFICIANT_STAGES.map((s, i) => (
-              <span
-                key={s.stageLabel}
-                className={`h-px flex-1 transition-colors duration-500 ${
-                  i <= stageIndex ? "bg-champagne" : "bg-ink/10"
-                }`}
-              />
-            ))}
-          </div>
-          <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-soft">
-            {String(stageIndex + 1).padStart(2, "0")} / {String(OFFICIANT_STAGES.length).padStart(2, "0")}
-            <span className="mx-2 text-champagne">·</span>
-            {stage.stageLabel}
-          </p>
-        </div>
-      ) : null}
+    <div className="relative flex flex-1 flex-col justify-center overflow-hidden px-8 py-12 md:px-16 md:py-16">
+      <Watermark corner="right" size="mid" />
 
-      {phase === "question" ? (
-        <div key={stageIndex} className="animate-[fadeIn_0.5s_ease] max-w-xl">
-          <h2 className="font-serif text-[32px] font-medium leading-[1.15] tracking-tight text-ink sm:text-[40px]">
-            {stage.question}
-          </h2>
-          <p className="mt-4 font-serif text-lg italic leading-relaxed text-ink-soft">
-            {stage.supportingText}
-          </p>
-
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSubmitAnswer();
-            }}
-            className="mt-9"
-          >
-            <textarea
-              ref={textareaRef}
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSubmitAnswer();
-                }
-              }}
-              rows={4}
-              placeholder="Take your time…"
-              className="w-full resize-none rounded-sm border border-ink/12 bg-ivory px-5 py-4 font-serif text-[17px] leading-relaxed text-ink placeholder:text-ink-soft/50 outline-none transition-colors focus:border-champagne"
-            />
-            <div className="mt-5 flex justify-end">
-              <button
-                type="submit"
-                disabled={!inputValue.trim()}
-                className="rounded-sm bg-ink px-6 py-3 text-sm font-medium text-ivory transition-all hover:-translate-y-0.5 hover:bg-wine disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:bg-ink"
-              >
-                Continue →
-              </button>
+      <div className="relative z-10">
+        {/* PROGRESS */}
+        {phase !== "complete" ? (
+          <div className="mb-10 md:mb-14">
+            <div className="flex items-center gap-1.5" aria-hidden="true">
+              {OFFICIANT_STAGES.map((s, i) => (
+                <span
+                  key={s.stageLabel}
+                  className={`h-px flex-1 transition-colors duration-500 ${
+                    i <= stageIndex ? "bg-champagne" : "bg-ink/10"
+                  }`}
+                />
+              ))}
             </div>
-          </form>
-        </div>
-      ) : null}
-
-      {phase === "acknowledging" ? (
-        submittingAck ? (
-          <div className="flex max-w-xl flex-col gap-3">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-soft">
-              Clara
-            </p>
-            <span className="h-2 w-2 animate-pulse rounded-full bg-champagne" aria-hidden="true" />
+            <div className="mt-3">
+              <Eyebrow animate={false}>
+                {String(stageIndex + 1).padStart(2, "0")} / {String(OFFICIANT_STAGES.length).padStart(2, "0")}{" "}
+                · {stage.stageLabel}
+              </Eyebrow>
+            </div>
           </div>
-        ) : (
-          <ClaraMessage label="Clara" message={acknowledgment ?? ""} />
-        )
-      ) : null}
+        ) : null}
 
-      {phase === "complete" ? (
-        <div className="animate-[fadeIn_0.6s_ease] max-w-xl">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-soft">
-            Your ceremony
-          </p>
-          <h2 className="mt-3 font-serif text-[32px] font-medium leading-[1.15] tracking-tight text-ink sm:text-[40px]">
-            Your ceremony is ready.
-          </h2>
-          <p className="mt-4 font-serif text-lg italic leading-relaxed text-ink-soft">
-            I&apos;ve listened to your story. Now I&apos;ll turn your words into something worthy
-            of the moment.
-          </p>
-
-          <div className="mt-9">
-            <button
-              onClick={handleCreateCeremony}
-              disabled={generating}
-              className="rounded-sm bg-ink px-6 py-3.5 text-sm font-medium text-ivory transition-all hover:-translate-y-0.5 hover:bg-wine disabled:opacity-60 disabled:hover:translate-y-0"
+        {phase === "question" ? (
+          <div key={stageIndex} className="max-w-xl">
+            <h2
+              className={`font-serif text-[38px] leading-[1.05] font-medium tracking-[-0.3px] text-ink min-[701px]:text-[56px] ${RISE_IN_HEADLINE}`}
             >
-              {generating ? "Clara is writing your ceremony…" : "Create My Ceremony →"}
-            </button>
-            {generateError ? (
-              <p className="mt-4 text-sm text-ink-soft">
-                Something interrupted us — please try again.
-              </p>
-            ) : null}
+              {stage.question}
+            </h2>
+            <p className={`mt-4 font-serif text-lg leading-relaxed text-ink-soft italic ${RISE_IN_FIELD}`}>
+              {stage.supportingText}
+            </p>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmitAnswer();
+              }}
+              className="mt-9"
+            >
+              <textarea
+                ref={textareaRef}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmitAnswer();
+                  }
+                }}
+                rows={4}
+                placeholder="Take your time…"
+                className={`w-full resize-none ${INPUT_EMOTIONAL_CLASS} ${RISE_IN_FIELD}`}
+              />
+              <div className={`mt-5 flex justify-end ${RISE_IN_ACTIONS}`}>
+                <button type="submit" disabled={!inputValue.trim()} className={PRIMARY_BUTTON_CLASS}>
+                  Continue
+                  <ButtonArrowIcon />
+                </button>
+              </div>
+            </form>
           </div>
-        </div>
-      ) : null}
+        ) : null}
+
+        {phase === "acknowledging" ? (
+          submittingAck ? (
+            <div className="flex max-w-xl flex-col gap-3">
+              <Eyebrow animate={false}>Clara</Eyebrow>
+              <span className="h-2 w-2 animate-pulse rounded-full bg-champagne" aria-hidden="true" />
+            </div>
+          ) : (
+            <ClaraMessage label="Clara" message={acknowledgment ?? ""} />
+          )
+        ) : null}
+
+        {phase === "complete" ? (
+          <div className="animate-[fadeIn_0.6s_ease] max-w-xl">
+            <Eyebrow animate={false}>Your ceremony</Eyebrow>
+            <h2 className="mt-3 font-serif text-[38px] leading-[1.05] font-medium tracking-[-0.3px] text-ink min-[701px]:text-[56px]">
+              Your ceremony is ready.
+            </h2>
+            <p className="mt-4 font-serif text-lg leading-relaxed text-ink-soft italic">
+              I&apos;ve listened to your story. Now I&apos;ll turn your words into something worthy
+              of the moment.
+            </p>
+
+            <div className="mt-9">
+              <button onClick={handleCreateCeremony} disabled={generating} className={PRIMARY_BUTTON_CLASS}>
+                {generating ? "Clara is writing your ceremony…" : "Create My Ceremony"}
+                <ButtonArrowIcon />
+              </button>
+              {generateError ? (
+                <p className="mt-4 text-sm text-ink-soft">
+                  Something interrupted us — please try again.
+                </p>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }

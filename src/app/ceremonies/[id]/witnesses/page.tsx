@@ -4,6 +4,7 @@ import { AppHeader } from "@/components/app-header";
 import { CeremonyNav } from "@/components/ceremony-nav";
 import { inviteWitness, removeWitness, requestSignature, updateVowsSharing } from "./actions";
 import { computeSharedContent, describeWitnessSharing } from "@/lib/witness-sharing";
+import { INPUT_CLASS } from "@/lib/design-tokens";
 import type { WitnessAttendanceType } from "@/lib/types/database";
 
 const ATTENDANCE_LABEL: Record<WitnessAttendanceType, string> = {
@@ -94,7 +95,7 @@ export default async function WitnessesPage({
         </div>
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-lg font-medium">Add a witness</h2>
+          <h2 className="font-serif text-2xl font-medium">Add a witness</h2>
           {witnessCount >= 12 ? (
             <p className="text-sm text-ink-soft">
               Your Witness Circle is full — up to 12 witnesses per ceremony.
@@ -109,26 +110,26 @@ export default async function WitnessesPage({
                   name="name"
                   placeholder="Name"
                   required
-                  className="flex-1 rounded-sm border border-ink/15 bg-white px-3 py-2 text-sm outline-none focus:border-champagne"
+                  className={`flex-1 ${INPUT_CLASS} text-sm`}
                 />
                 <input
                   name="email"
                   type="email"
                   placeholder="Email"
                   required
-                  className="flex-1 rounded-sm border border-ink/15 bg-white px-3 py-2 text-sm outline-none focus:border-champagne"
+                  className={`flex-1 ${INPUT_CLASS} text-sm`}
                 />
               </div>
               <input
                 name="relationship"
                 placeholder="Relationship (optional)"
-                className="rounded-sm border border-ink/15 bg-white px-3 py-2 text-sm outline-none focus:border-champagne"
+                className={`${INPUT_CLASS} text-sm`}
               />
               <select
                 name="attendance_type"
                 required
                 defaultValue=""
-                className="rounded-sm border border-ink/15 bg-white px-3 py-2 text-sm"
+                className="rounded-[2px] border border-[rgba(184,150,110,0.5)] bg-white px-4 py-3 text-sm text-ink outline-none"
               >
                 <option value="" disabled>
                   Attendance
@@ -158,7 +159,7 @@ export default async function WitnessesPage({
         </section>
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-lg font-medium">Your circle</h2>
+          <h2 className="font-serif text-2xl font-medium">Your circle</h2>
           {!witnesses || witnesses.length === 0 ? (
             <p className="text-ink-soft">
               No witnesses yet — invite the people you&apos;d like beside you.

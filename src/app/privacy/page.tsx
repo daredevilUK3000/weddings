@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { MarketingNav, MarketingFooter } from "@/components/marketing-chrome";
 import { LegalH2, LegalP, LegalUl, LegalLi } from "@/components/legal-prose";
+import { Eyebrow } from "@/components/eyebrow";
 
 export const metadata = {
   title: "Privacy Policy — Weddings for One",
@@ -24,9 +25,7 @@ export default async function PrivacyPage() {
 
       <section className="px-6 pt-14 pb-24 sm:px-14 sm:pb-32">
         <div className="mx-auto max-w-2xl">
-          <p className="text-[11.5px] font-semibold uppercase tracking-[0.2em] text-dusty-rose">
-            Legal
-          </p>
+          <Eyebrow animate={false}>Legal</Eyebrow>
           <h1 className="mt-3 font-serif text-[36px] font-medium leading-[1.1] tracking-tight text-ink sm:text-[42px]">
             Privacy Policy
           </h1>

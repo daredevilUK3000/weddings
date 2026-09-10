@@ -4,6 +4,15 @@ import { createClient } from "@/lib/supabase/server";
 import { SignOutButton } from "@/components/sign-out-button";
 import { AppHeader } from "@/components/app-header";
 import { CeremonyDangerActions } from "@/components/ceremony-danger-actions";
+import { Watermark } from "@/components/watermark";
+import { ButtonArrowIcon } from "@/components/button-arrow-icon";
+import {
+  PRIMARY_BUTTON_HERO_CLASS,
+  RISE_IN_HERO_HEADLINE,
+  RISE_IN_HERO_SUBHEAD,
+  RISE_IN_HERO_CTA,
+  RISE_IN_HERO_CARD,
+} from "@/lib/design-tokens";
 import type { CeremonyStatus } from "@/lib/types/database";
 
 const VIBE_LABEL: Record<string, string> = {
@@ -41,46 +50,29 @@ function EmptyStateHero() {
   return (
     <div className="relative overflow-hidden">
       <div className="relative mx-auto grid w-full max-w-[1180px] grid-cols-1 items-center gap-16 px-7 pt-[60px] pb-[90px] min-[881px]:grid-cols-[1.15fr_0.85fr] min-[881px]:px-12 min-[881px]:pt-[90px] min-[881px]:pb-[140px]">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-[60px] -left-20 z-0 hidden font-serif text-[620px] leading-none text-parchment select-none min-[881px]:block"
-        >
-          W
-        </div>
+        <Watermark corner="left" size="hero" />
 
         <div className="relative z-10">
           <div className="mb-7 h-px w-10 bg-champagne" />
-          <h1 className="rise-in-el m-0 animate-[riseIn_0.9s_ease_both] font-serif text-[56px] font-medium leading-[0.98] tracking-[-0.5px] min-[881px]:text-[88px]">
+          <h1 className={`m-0 font-serif text-[56px] font-medium leading-[0.98] tracking-[-0.5px] min-[881px]:text-[88px] ${RISE_IN_HERO_HEADLINE}`}>
             Your
             <br />
             ceremony
             <br />
             <em className="font-normal text-dusty-rose italic">begins here.</em>
           </h1>
-          <p className="rise-in-el mb-12 max-w-[420px] animate-[riseIn_0.9s_ease_0.1s_both] font-serif text-2xl text-ink/65 italic">
+          <p className={`mb-12 max-w-[420px] font-serif text-2xl text-ink/65 italic ${RISE_IN_HERO_SUBHEAD}`}>
             Not a project. An occasion.
           </p>
-          <div className="rise-in-el flex animate-[riseIn_0.9s_ease_0.2s_both] items-center gap-5">
-            <Link
-              href="/onboarding"
-              className="inline-flex items-center gap-3 rounded-sm bg-ink px-[34px] py-[19px] text-[14.5px] font-medium tracking-[0.4px] text-ivory transition-all hover:-translate-y-px hover:bg-wine"
-            >
+          <div className={`flex items-center gap-5 ${RISE_IN_HERO_CTA}`}>
+            <Link href="/onboarding" className={PRIMARY_BUTTON_HERO_CLASS}>
               Start planning a new ceremony
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                className="h-3.5 w-3.5"
-                aria-hidden
-              >
-                <path d="M5 12h14M13 6l6 6-6 6" />
-              </svg>
+              <ButtonArrowIcon />
             </Link>
           </div>
         </div>
 
-        <div className="rise-in-el relative z-10 animate-[riseIn_1s_ease_0.3s_both]">
+        <div className={`relative z-10 ${RISE_IN_HERO_CARD}`}>
           <div className="group relative rotate-[1.4deg] border border-champagne/40 bg-ivory px-10 py-14 text-center shadow-[0_24px_60px_rgba(32,32,29,0.10)] transition-transform duration-[400ms] ease-out hover:rotate-0">
             <span
               aria-hidden

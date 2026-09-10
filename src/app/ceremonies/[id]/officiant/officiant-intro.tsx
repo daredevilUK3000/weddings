@@ -1,3 +1,5 @@
+import { Eyebrow } from "@/components/eyebrow";
+
 export function OfficiantIntro() {
   return (
     <div className="flex flex-col items-center gap-5 px-8 py-10 text-center md:h-full md:items-start md:px-10 md:py-14 md:text-left">
@@ -13,9 +15,9 @@ export function OfficiantIntro() {
       </div>
 
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-soft">
-          Your officiant
-        </p>
+        <div className="mx-auto w-fit md:mx-0">
+          <Eyebrow animate={false}>Your officiant</Eyebrow>
+        </div>
         <p className="mt-2 font-serif text-2xl font-medium text-ink">Clara</p>
         <p className="text-xs uppercase tracking-[0.14em] text-dusty-rose">
           Ceremony Writer &amp; Officiant

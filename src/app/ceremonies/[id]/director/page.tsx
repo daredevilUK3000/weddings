@@ -10,6 +10,7 @@ import { getDirectorMessage } from "@/lib/director/messages";
 import { DirectorActionButton, LiveWeddingDayView, CeremonyModeView } from "./director-client";
 import { VendorBookingStatusEditor } from "@/components/vendor-booking-status-editor";
 import { ClaraMessage } from "@/components/clara-message";
+import { Eyebrow } from "@/components/eyebrow";
 
 export default async function DirectorPage({
   params,
@@ -119,8 +120,8 @@ export default async function DirectorPage({
 
       <main className="mx-auto flex w-full max-w-2xl flex-col gap-10 px-6 py-12">
         <div>
-          <p className="text-sm font-medium text-wine">Your Wedding Day</p>
-          <h1 className="mt-1 font-serif text-3xl font-medium">Wedding Director</h1>
+          <Eyebrow animate={false}>Your Wedding Day</Eyebrow>
+          <h1 className="mt-3 font-serif text-3xl font-medium">Wedding Director</h1>
           <p className="mt-2 text-sm text-ink-soft">
             Everything you&apos;ve planned, brought together into one beautifully organised
             wedding-day experience.
@@ -137,7 +138,7 @@ export default async function DirectorPage({
           <>
             <section className="flex flex-col gap-3">
               <div className="flex items-baseline justify-between">
-                <h2 className="text-lg font-medium">Readiness</h2>
+                <h2 className="font-serif text-xl font-medium">Readiness</h2>
                 <span className="font-serif text-2xl text-champagne">{readiness.score}%</span>
               </div>
               <div className="rounded-sm border border-ink/10 bg-white/60 px-2 py-2">
@@ -167,7 +168,7 @@ export default async function DirectorPage({
 
             {vendors && vendors.length > 0 ? (
               <section className="flex flex-col gap-3">
-                <h2 className="text-lg font-medium">Vendors</h2>
+                <h2 className="font-serif text-xl font-medium">Vendors</h2>
                 <ul className="flex flex-col gap-3">
                   {vendors.map((v) => (
                     <li key={v.id} className="flex flex-col gap-2">

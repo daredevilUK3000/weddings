@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { MarketingNav, MarketingFooter } from "@/components/marketing-chrome";
 import { FaqAccordion } from "@/components/landing/faq-accordion";
+import { Eyebrow } from "@/components/eyebrow";
 import { FAQS } from "@/lib/faq-data";
 
 export const metadata = {
@@ -34,9 +35,9 @@ export default async function FaqPage() {
           <div className="mx-auto mb-7 flex h-11 w-11 items-center justify-center rounded-full border border-champagne">
             <span className="font-serif text-xl italic text-champagne">?</span>
           </div>
-          <p className="mb-5 text-[11.5px] font-semibold uppercase tracking-[0.2em] text-dusty-rose">
-            Before you begin
-          </p>
+          <div className="mx-auto mb-5 w-fit">
+            <Eyebrow animate={false}>Before you begin</Eyebrow>
+          </div>
           <h1 className="font-serif text-[38px] font-medium leading-[1.1] tracking-tight text-ink sm:text-5xl">
             Questions, answered.
           </h1>

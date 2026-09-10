@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { MarketingNav, MarketingFooter } from "@/components/marketing-chrome";
+import { Eyebrow } from "@/components/eyebrow";
 
 export const metadata = {
   title: "Contact Us — Weddings for One",
@@ -27,9 +28,9 @@ export default async function ContactPage() {
         }}
       >
         <div className="mx-auto max-w-xl">
-          <p className="mb-5 text-[11.5px] font-semibold uppercase tracking-[0.2em] text-dusty-rose">
-            Get in touch
-          </p>
+          <div className="mx-auto mb-5 w-fit">
+            <Eyebrow animate={false}>Get in touch</Eyebrow>
+          </div>
           <h1 className="font-serif text-[38px] font-medium leading-[1.1] tracking-tight text-ink sm:text-5xl">
             Contact us
           </h1>

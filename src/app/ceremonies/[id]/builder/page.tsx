@@ -58,14 +58,14 @@ export default async function BuilderPage({
 
       <main className="mx-auto flex w-full max-w-2xl flex-col gap-12 px-6 py-12">
         <div>
-          <h1 className="font-serif text-3xl font-medium">Your ceremony</h1>
+          <h1 className="font-serif text-4xl font-medium tracking-[-0.3px]">Your ceremony</h1>
           <p className="mt-1 text-sm text-ink-soft">Your script, your vows, your day — shaped.</p>
         </div>
 
         {ceremony.ceremony_script ? (
           <section className="flex flex-col gap-3">
             <div className="flex items-center justify-between gap-3">
-              <h2 className="text-lg font-medium">Your ceremony script</h2>
+              <h2 className="font-serif text-2xl font-medium">Your ceremony script</h2>
               <PrintButton />
             </div>
             <CeremonyScriptView script={ceremony.ceremony_script} />
@@ -85,7 +85,7 @@ export default async function BuilderPage({
 
         {vowDrafts ? (
           <section className="flex flex-col gap-3">
-            <h2 className="text-lg font-medium">Choose your vows</h2>
+            <h2 className="font-serif text-2xl font-medium">Choose your vows</h2>
             {vowDrafts.map((draft, i) => (
               <form key={i} action={selectVowDraft.bind(null, id, draft)}>
                 <button
@@ -99,7 +99,7 @@ export default async function BuilderPage({
           </section>
         ) : ceremony.vows ? (
           <section className="flex flex-col gap-3">
-            <h2 className="text-lg font-medium">Your vows</h2>
+            <h2 className="font-serif text-2xl font-medium">Your vows</h2>
             <pre className="whitespace-pre-wrap rounded-sm border border-ink/10 bg-white/60 p-5 font-serif text-[15px] leading-relaxed">
               {ceremony.vows}
             </pre>
@@ -108,7 +108,7 @@ export default async function BuilderPage({
 
         {ceremony.witness_reading ? (
           <section className="flex flex-col gap-3">
-            <h2 className="text-lg font-medium">Witness reading</h2>
+            <h2 className="font-serif text-2xl font-medium">Witness reading</h2>
             <pre className="whitespace-pre-wrap rounded-sm border border-ink/10 bg-white/60 p-5 font-serif text-[15px] leading-relaxed">
               {ceremony.witness_reading}
             </pre>
@@ -116,7 +116,7 @@ export default async function BuilderPage({
         ) : null}
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-lg font-medium">Your programme</h2>
+          <h2 className="font-serif text-2xl font-medium">Your programme</h2>
           <div className="rounded-sm border border-champagne/40 bg-white/60 px-2 py-2">
             <ul>
               {timeline?.map((moment, i) => (

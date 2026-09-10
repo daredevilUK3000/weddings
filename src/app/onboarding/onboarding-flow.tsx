@@ -3,6 +3,17 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { createCeremony } from "./actions";
+import { Eyebrow } from "@/components/eyebrow";
+import { Watermark } from "@/components/watermark";
+import { ButtonArrowIcon } from "@/components/button-arrow-icon";
+import {
+  PRIMARY_BUTTON_CLASS,
+  INPUT_CLASS,
+  INPUT_EMOTIONAL_CLASS,
+  RISE_IN_HEADLINE,
+  RISE_IN_FIELD,
+  RISE_IN_ACTIONS,
+} from "@/lib/design-tokens";
 
 export const PENDING_CEREMONY_KEY = "wf1_pending_ceremony";
 
@@ -61,9 +72,15 @@ function answersToFormData(answers: Answers): FormData {
   return fd;
 }
 
+// Mid-flow headline — 56px desktop / 38px mobile per the design system's
+// scale for "an individual onboarding question," matching
+// onboarding-question-mockup-bold.html exactly (700px breakpoint, 1.05
+// line-height, -0.3px tracking).
 function Prompt({ children }: { children: React.ReactNode }) {
   return (
-    <h1 className="max-w-lg font-serif text-3xl font-medium leading-tight sm:text-[40px]">
+    <h1
+      className={`m-0 max-w-lg font-serif text-[38px] leading-[1.05] font-medium tracking-[-0.3px] min-[701px]:text-[56px] ${RISE_IN_HEADLINE}`}
+    >
       {children}
     </h1>
   );
@@ -81,14 +98,30 @@ function ContinueButton({
   children?: React.ReactNode;
 }) {
   return (
-    <button
-      type={type}
-      onClick={onClick}
-      disabled={disabled}
-      className="w-fit rounded-sm bg-ink px-6 py-3 text-sm font-medium text-ivory transition-all hover:-translate-y-0.5 hover:bg-wine disabled:opacity-40 disabled:hover:translate-y-0"
-    >
-      {children}
-    </button>
+    <div className={`flex items-center ${RISE_IN_ACTIONS}`}>
+      <button type={type} onClick={onClick} disabled={disabled} className={PRIMARY_BUTTON_CLASS}>
+        {children}
+        <ButtonArrowIcon />
+      </button>
+    </div>
+  );
+}
+
+// Wraps a step's content with the shared watermark (alternating corner
+// per step so a run of questions doesn't feel identically stamped) and
+// the relative/z-10 scaffolding every "moment" screen needs.
+function QuestionScreen({
+  corner,
+  children,
+}: {
+  corner: "left" | "right";
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="relative">
+      <Watermark corner={corner} size="mid" />
+      <div className="relative z-10 flex flex-col gap-6">{children}</div>
+    </div>
   );
 }
 
@@ -149,12 +182,10 @@ export function OnboardingFlow({
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-xl flex-col justify-center gap-8 px-6 py-16">
+    <main className="mx-auto flex min-h-screen w-full max-w-xl flex-col justify-center overflow-hidden px-6 py-16">
       {step === "reason" ? (
-        <div className="flex flex-col gap-6 animate-[fadeIn_0.5s_ease]">
-          <p className="text-sm font-medium tracking-wide text-champagne uppercase">
-            Let&apos;s begin with one question
-          </p>
+        <QuestionScreen corner="right">
+          <Eyebrow>Let&apos;s begin with one question</Eyebrow>
           <Prompt>Why are you doing this?</Prompt>
           <textarea
             autoFocus
@@ -162,49 +193,42 @@ export function OnboardingFlow({
             value={answers.reason}
             onChange={(e) => update("reason", e.target.value)}
             placeholder="A milestone, a recovery, a career win, a simple yes to yourself…"
-            className="rounded-sm border border-ink/15 bg-white px-4 py-3 font-serif text-lg outline-none focus:border-champagne"
+            className={`${INPUT_EMOTIONAL_CLASS} ${RISE_IN_FIELD}`}
           />
-          <ContinueButton
-            disabled={!answers.reason.trim()}
-            onClick={() => setStep("reveal")}
-          />
-        </div>
+          <ContinueButton disabled={!answers.reason.trim()} onClick={() => setStep("reveal")} />
+        </QuestionScreen>
       ) : null}
 
       {step === "reveal" ? (
-        <div className="flex flex-col gap-6 animate-[fadeIn_0.6s_ease]">
-          <p className="font-serif text-2xl italic leading-relaxed sm:text-3xl">
+        <QuestionScreen corner="left">
+          <p className={`font-serif text-2xl italic leading-relaxed sm:text-3xl ${RISE_IN_HEADLINE}`}>
             &ldquo;{answers.reason}&rdquo;
           </p>
-          <p className="text-sm text-ink-soft">That&apos;s going into your ceremony.</p>
+          <p className={`text-sm text-ink-soft ${RISE_IN_FIELD}`}>That&apos;s going into your ceremony.</p>
           <ContinueButton onClick={() => setStep(existingName ? "vibe" : "name")} />
-        </div>
+        </QuestionScreen>
       ) : null}
 
       {step === "name" ? (
-        <div className="flex flex-col gap-6 animate-[fadeIn_0.5s_ease]">
-          <p className="text-sm font-medium tracking-wide text-champagne uppercase">
-            Making this feel like yours
-          </p>
+        <QuestionScreen corner="right">
+          <Eyebrow>Making this feel like yours</Eyebrow>
           <Prompt>What should we call you?</Prompt>
           <input
             autoFocus
             value={answers.name}
             onChange={(e) => update("name", e.target.value)}
             placeholder="Your first name is plenty"
-            className="rounded-sm border border-ink/15 bg-white px-4 py-3 font-serif text-lg outline-none focus:border-champagne"
+            className={`${INPUT_EMOTIONAL_CLASS} ${RISE_IN_FIELD}`}
           />
           <ContinueButton disabled={!answers.name.trim()} onClick={() => setStep("vibe")} />
-        </div>
+        </QuestionScreen>
       ) : null}
 
       {step === "vibe" ? (
-        <div className="flex flex-col gap-6 animate-[fadeIn_0.5s_ease]">
-          <p className="text-sm font-medium tracking-wide text-champagne uppercase">
-            The tone
-          </p>
+        <QuestionScreen corner="left">
+          <Eyebrow>The tone</Eyebrow>
           <Prompt>What does this ceremony feel like?</Prompt>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          <div className={`grid grid-cols-2 gap-2 sm:grid-cols-3 ${RISE_IN_FIELD}`}>
             {VIBES.map((v) => (
               <button
                 key={v.value}
@@ -212,7 +236,7 @@ export function OnboardingFlow({
                 className={`rounded-sm border px-3 py-3 text-sm transition-colors ${
                   answers.vibe === v.value
                     ? "border-champagne bg-champagne/15"
-                    : "border-ink/15 bg-white hover:border-champagne/60"
+                    : "border-[rgba(184,150,110,0.5)] bg-white hover:border-champagne/60"
                 }`}
               >
                 {v.label}
@@ -220,52 +244,48 @@ export function OnboardingFlow({
             ))}
           </div>
           <ContinueButton disabled={!answers.vibe} onClick={() => setStep("place")} />
-        </div>
+        </QuestionScreen>
       ) : null}
 
       {step === "place" ? (
-        <div className="flex flex-col gap-6 animate-[fadeIn_0.5s_ease]">
-          <p className="text-sm font-medium tracking-wide text-champagne uppercase">
-            The place and day
-          </p>
+        <QuestionScreen corner="right">
+          <Eyebrow>The place and day</Eyebrow>
           <Prompt>Where would you love to do it?</Prompt>
           <input
             autoFocus
             value={answers.location}
             onChange={(e) => update("location", e.target.value)}
             placeholder="City, region… (or leave it open for now)"
-            className="rounded-sm border border-ink/15 bg-white px-4 py-3 font-serif text-lg outline-none focus:border-champagne"
+            className={`${INPUT_EMOTIONAL_CLASS} ${RISE_IN_FIELD}`}
           />
-          <label className="flex flex-col gap-1.5">
+          <label className={`flex flex-col gap-1.5 ${RISE_IN_FIELD}`}>
             <span className="text-sm text-ink-soft">A date, if you have one in mind</span>
             <input
               type="date"
               value={answers.date}
               onChange={(e) => update("date", e.target.value)}
-              className="w-fit rounded-sm border border-ink/15 bg-white px-3 py-2 text-sm outline-none focus:border-champagne"
+              className={`w-fit text-sm ${INPUT_CLASS}`}
             />
           </label>
           <ContinueButton onClick={() => setStep("people")} />
-        </div>
+        </QuestionScreen>
       ) : null}
 
       {step === "people" ? (
-        <div className="flex flex-col gap-6 animate-[fadeIn_0.5s_ease]">
-          <p className="text-sm font-medium tracking-wide text-champagne uppercase">
-            Your people, your budget
-          </p>
+        <QuestionScreen corner="left">
+          <Eyebrow>Your people, your budget</Eyebrow>
           <Prompt>Who do you want beside you, and what matters most?</Prompt>
-          <label className="flex flex-col gap-1.5">
+          <label className={`flex flex-col gap-1.5 ${RISE_IN_FIELD}`}>
             <span className="text-sm text-ink-soft">Guest count</span>
             <input
               type="number"
               min={0}
               value={answers.guest_count}
               onChange={(e) => update("guest_count", Number(e.target.value) || 0)}
-              className="w-32 rounded-sm border border-ink/15 bg-white px-3 py-2 outline-none focus:border-champagne"
+              className={`w-32 ${INPUT_CLASS}`}
             />
           </label>
-          <div className="flex flex-col gap-2">
+          <div className={`flex flex-col gap-2 ${RISE_IN_FIELD}`}>
             <span className="text-sm text-ink-soft">Budget</span>
             <div className="flex flex-wrap gap-2">
               {BUDGET_BANDS.map((b) => (
@@ -275,7 +295,7 @@ export function OnboardingFlow({
                   className={`rounded-sm border px-3 py-2 text-sm transition-colors ${
                     answers.budget_band === b
                       ? "border-champagne bg-champagne/15"
-                      : "border-ink/15 bg-white hover:border-champagne/60"
+                      : "border-[rgba(184,150,110,0.5)] bg-white hover:border-champagne/60"
                   }`}
                 >
                   {b}
@@ -283,7 +303,7 @@ export function OnboardingFlow({
               ))}
             </div>
           </div>
-          <div className="flex flex-col gap-2">
+          <div className={`flex flex-col gap-2 ${RISE_IN_FIELD}`}>
             <span className="text-sm text-ink-soft">
               What matters most — choose as many as you like
             </span>
@@ -304,7 +324,7 @@ export function OnboardingFlow({
                     className={`rounded-sm border px-3 py-2 text-sm transition-colors ${
                       checked
                         ? "border-champagne bg-champagne/15"
-                        : "border-ink/15 bg-white hover:border-champagne/60"
+                        : "border-[rgba(184,150,110,0.5)] bg-white hover:border-champagne/60"
                     }`}
                   >
                     {p.label}
@@ -314,16 +334,14 @@ export function OnboardingFlow({
             </div>
           </div>
           <ContinueButton onClick={() => setStep("summary")} />
-        </div>
+        </QuestionScreen>
       ) : null}
 
       {step === "summary" ? (
-        <div className="flex flex-col gap-6 animate-[fadeIn_0.6s_ease]">
-          <p className="text-sm font-medium tracking-wide text-champagne uppercase">
-            Your ceremony
-          </p>
+        <QuestionScreen corner="right">
+          <Eyebrow>Your ceremony</Eyebrow>
           <Prompt>We&apos;ve got the beginning of your day.</Prompt>
-          <div className="rounded-sm border border-champagne/50 bg-white px-6 py-6">
+          <div className={`rounded-sm border border-[rgba(184,150,110,0.5)] bg-white px-6 py-6 ${RISE_IN_FIELD}`}>
             <p className="font-serif text-xl">
               {VIBES.find((v) => v.value === answers.vibe)?.label ?? "Your"} ceremony
             </p>
@@ -333,27 +351,24 @@ export function OnboardingFlow({
             </p>
           </div>
           <ContinueButton disabled={submitting} onClick={handleEnter}>
-            {submitting ? "Entering…" : "Enter your ceremony →"}
+            {submitting ? "Entering…" : "Enter your ceremony"}
           </ContinueButton>
-        </div>
+        </QuestionScreen>
       ) : null}
 
       {step === "auth" ? (
-        <form
-          onSubmit={handleCreateAccount}
-          className="flex flex-col gap-6 animate-[fadeIn_0.5s_ease]"
-        >
-          <p className="text-sm font-medium tracking-wide text-champagne uppercase">
-            One last thing
-          </p>
-          <Prompt>Save your ceremony so it&apos;s waiting for you.</Prompt>
+        <form onSubmit={handleCreateAccount} className="flex flex-col gap-6">
+          <Eyebrow animate={false}>One last thing</Eyebrow>
+          <h1 className="m-0 max-w-lg font-serif text-[38px] leading-[1.05] font-medium tracking-[-0.3px] min-[701px]:text-[56px]">
+            Save your ceremony so it&apos;s waiting for you.
+          </h1>
           <input
             type="email"
             required
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="rounded-sm border border-ink/15 bg-white px-4 py-3 outline-none focus:border-champagne"
+            className={INPUT_CLASS}
           />
           <input
             type="password"
@@ -362,19 +377,24 @@ export function OnboardingFlow({
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="rounded-sm border border-ink/15 bg-white px-4 py-3 outline-none focus:border-champagne"
+            className={INPUT_CLASS}
           />
           {authError ? <p className="text-sm text-wine">{authError}</p> : null}
-          <ContinueButton type="submit" disabled={submitting}>
-            {submitting ? "Saving…" : "Save & continue"}
-          </ContinueButton>
+          <div className="flex items-center">
+            <button type="submit" disabled={submitting} className={PRIMARY_BUTTON_CLASS}>
+              {submitting ? "Saving…" : "Save & continue"}
+              <ButtonArrowIcon />
+            </button>
+          </div>
         </form>
       ) : null}
 
       {step === "sent" ? (
-        <div className="flex flex-col gap-4 text-center animate-[fadeIn_0.6s_ease]">
+        <div className="flex flex-col gap-4 text-center">
           <div className="mx-auto h-px w-10 bg-champagne" />
-          <Prompt>Check your email.</Prompt>
+          <h1 className="m-0 font-serif text-[38px] leading-[1.05] font-medium tracking-[-0.3px] min-[701px]:text-[56px]">
+            Check your email.
+          </h1>
           <p className="text-ink-soft">
             We sent a confirmation link to {email}. Follow it, and your ceremony will be waiting
             for you.
