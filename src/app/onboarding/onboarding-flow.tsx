@@ -182,7 +182,7 @@ export function OnboardingFlow({
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-xl flex-col justify-center overflow-hidden px-6 py-16">
+    <main className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center overflow-hidden px-6 py-16">
       {step === "reason" ? (
         <QuestionScreen corner="right">
           <Eyebrow>Let&apos;s begin with one question</Eyebrow>
