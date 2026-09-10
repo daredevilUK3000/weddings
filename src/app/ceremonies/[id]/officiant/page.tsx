@@ -28,7 +28,7 @@ export default async function OfficiantPage({
   }
 
   return (
-    <div className="flex h-screen flex-col bg-parchment">
+    <div className="flex h-screen flex-col bg-ivory">
       <AppHeader />
       <CeremonyNav ceremonyId={id} />
 
