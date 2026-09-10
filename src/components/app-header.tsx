@@ -21,12 +21,12 @@ export async function AppHeader({
 
   return (
     <header className="border-b border-ink/10 print:hidden">
-      <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-5">
-        <Link href={homeHref} className="flex items-center gap-3.5 text-ink">
-          <SealIcon className="h-[72px] w-[72px]" />
-          <Wordmark className="text-[40px]" />
+      <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-5 py-4 sm:px-6 sm:py-5">
+        <Link href={homeHref} className="flex min-w-0 items-center gap-2.5 text-ink sm:gap-3.5">
+          <SealIcon className="h-9 w-9 shrink-0 sm:h-[72px] sm:w-[72px]" />
+          <Wordmark className="truncate text-lg sm:text-[40px]" />
         </Link>
-        {right}
+        <div className="shrink-0">{right}</div>
       </div>
       {daysLeft !== null ? <TrialStatusBar daysLeft={daysLeft} /> : null}
     </header>

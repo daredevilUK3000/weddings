@@ -11,12 +11,12 @@ export function MarketingNav({
   primaryLabel: string;
 }) {
   return (
-    <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-7 sm:px-14">
-      <Link href="/" className="flex items-center gap-4 text-ink">
-        <SealIcon className="h-[88px] w-[88px]" />
-        <Wordmark className="text-[48px]" />
+    <nav className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-5 py-4 sm:px-14 sm:py-7">
+      <Link href="/" className="flex min-w-0 items-center gap-2.5 text-ink sm:gap-4">
+        <SealIcon className="h-10 w-10 shrink-0 sm:h-[88px] sm:w-[88px]" />
+        <Wordmark className="truncate text-xl sm:text-[48px]" />
       </Link>
-      <div className="flex items-center gap-9">
+      <div className="flex shrink-0 items-center gap-9">
         <Link href="/#moments" className="hidden text-sm font-medium sm:inline">
           How it works
         </Link>
@@ -33,7 +33,7 @@ export function MarketingNav({
         ) : null}
         <Link
           href={primaryHref}
-          className="rounded-sm bg-ink px-5 py-2.5 text-sm font-medium text-ivory transition-all hover:-translate-y-0.5 hover:bg-wine"
+          className="rounded-sm bg-ink px-3 py-2 text-xs font-medium whitespace-nowrap text-ivory transition-all hover:-translate-y-0.5 hover:bg-wine sm:px-5 sm:py-2.5 sm:text-sm"
         >
           {primaryLabel}
         </Link>
