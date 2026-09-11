@@ -5,6 +5,7 @@ import { MarketingNav, MarketingFooter } from "@/components/marketing-chrome";
 import { TaglineRotator } from "@/components/landing/tagline-rotator";
 import { VowPromptPreview } from "@/components/landing/vow-prompt-preview";
 import { CertificatePersonalizer } from "@/components/landing/certificate-personalizer";
+import { CredibilitySection } from "@/components/landing/credibility-section";
 import { Eyebrow } from "@/components/eyebrow";
 
 export default async function LandingPage() {
@@ -207,6 +208,8 @@ export default async function LandingPage() {
         </div>
         <CertificatePersonalizer />
       </section>
+
+      <CredibilitySection />
 
       {/* TRUST SIGNAL — marketing copy is exempt from the in-product AI-invisibility rule */}
       <section className="border-t border-ink/10 px-6 py-14 text-center sm:px-14">

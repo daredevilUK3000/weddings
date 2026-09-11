@@ -73,13 +73,57 @@ body {
   }
 }
 
-/* Dashboard empty-state hero entrance — the only motion on that page, so
-   this is the one spot that needs an explicit reduced-motion override
+@keyframes dealIn {
+  from {
+    opacity: 0;
+    transform: translateX(var(--deal-x, 0)) translateY(30px) rotate(var(--deal-rot, 0deg)) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0) rotate(0) scale(1);
+  }
+}
+
+/* Landing page credibility section: book covers "deal from a deck" on
+   load, then tilt in 3D on hover. These MUST stay on two separate nested
+   elements (.credibility-book for the one-time entrance, .credibility-book-cover
+   for the hover transform) — an entrance animation with fill-mode: both
+   on the same element as a hover transform pins that element's transform
+   permanently, silently overriding the hover effect with no console
+   error. See weddingsforone-credibility-section-handoff.md. */
+.credibility-book {
+  animation: dealIn 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.credibility-book-cover {
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.credibility-book:hover .credibility-book-cover {
+  transform: translateY(-12px) rotateY(-14deg) rotateZ(-1deg);
+  box-shadow: -14px 30px 50px rgba(0, 0, 0, 0.55);
+}
+
+/* Dashboard empty-state hero entrance and the credibility section's book
+   deal-in/hover are the spots with an explicit reduced-motion override
    rather than relying on a JS check. */
 @media (prefers-reduced-motion: reduce) {
   .rise-in-el {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  .credibility-book {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .credibility-book:hover .credibility-book-cover {
+    transform: none;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
   }
 }
