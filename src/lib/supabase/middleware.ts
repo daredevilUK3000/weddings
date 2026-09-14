@@ -25,6 +25,10 @@ const PUBLIC_PATHS = [
   "/api/certificate/pdf",
   "/api/cron",
   "/api/webhooks/stripe",
+  // /api/health is App Keeper (external monitor) calling with no Supabase
+  // session at all -- same shape of exception as the cron/webhook routes
+  // above. It has no sensitive data of its own to protect.
+  "/api/health",
 ];
 
 // Routes gated by the 14-day trial lock (see WeddingsStuff for Claude/
